@@ -148,14 +148,14 @@ let LIVE=null;
 const key=(p,o)=>p.id+"|"+o.join("|");
 const vars=p=>{if(!LIVE)return p.variants;const f=p.variants.map(v=>[v[0],LIVE[key(p,v[0])]||0]).filter(v=>v[1]>0);return f.length?f:p.variants.filter(v=>v[1]>0)};
 const liveStock=p=>{if(!LIVE)return p.stock||1;let s=0,hit=0;(p.variants||[]).forEach(v=>{const k=key(p,v[0]);if(k in LIVE)hit++;s+=Number(LIVE[k])||0});return hit?s:(p.stock||1)};
-async function loadStock(){try{const r=await fetch(C.STOCK_URL+"&_="+Date.now());const t=await r.text();const j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));const m={};j.table.rows.forEach(x=>{if(x.c[0]&&x.c[1])m[x.c[0].v]=x.c[1].v});if(Object.keys(m).length){LIVE=m;window.LIVE=m;return true}}catch(e){}return false}
+async function loadStock(){try{const r=await fetch(C.STOCK_URL+"&_="+Date.now());const t=await r.text();const j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));const m={};j.table.rows.forEach(x=>{if(x.c[0]&&x.c[1]){const c=x.c[1];const v=(c.v!=null?c.v:(c.f!=null?Number(c.f):0));m[x.c[0].v]=v}});if(Object.keys(m).length){LIVE=m;window.LIVE=m;return true}}catch(e){}return false}
 let cart=[];try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
 const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="09470845";
+const DV="6632c166";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const c of IDX.cats){await loadCat(c.f)}cats();grid()}
