@@ -46,6 +46,10 @@ h2{font-size:28px;color:var(--navy);margin-bottom:24px;text-align:center}
 .cats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .chips.subs{margin:-4px 14px 10px;gap:6px}
 .chip.sm{padding:5px 12px;font-size:13px;font-weight:500}
+.chips.subs2{margin:-4px 14px 10px;gap:6px}
+.chip.xs{padding:4px 10px;font-size:12px;font-weight:500}
+.ptools{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin:2px 14px 10px;align-items:center}
+.ptools .chips{margin:0;gap:6px}
 .cats span{background:#fff;border:1px solid #eadfce;border-radius:999px;padding:8px 20px;color:var(--navy);font-weight:600}
 .cta{background:var(--navy);color:#fff;text-align:center;border-radius:24px;padding:44px 20px}
 .cta h2{color:#fff}
@@ -115,7 +119,7 @@ select,input,textarea{font:inherit;padding:10px;border:1px solid #d9cdb9;border-
 <p>سكرابات، بالطو، سماعات وأدوات، وكل اللي الطبيب وطالب الطب محتاجه في مكان واحد — دفع عند الاستلام والتوصيل لكل المحافظات.</p></div>
 <button class="btn" id="docsbtn">اتفرج على الركن</button>
 </div></div></section>
-<section id="products"><div class="wrap"><h2>المنتجات <span class="ptot" id="ptot"></span></h2><div class="chips" id="cats"></div><div class="chips subs" id="subcats"></div><div id="grid"></div></div></section>
+<section id="products"><div class="wrap"><h2>المنتجات <span class="ptot" id="ptot"></span></h2><div class="chips" id="cats"></div><div class="chips subs" id="subcats"></div><div class="chips subs2" id="subcats2"></div><div class="ptools" id="ptools"><div class="chips subs" id="psort"><button class="chip sm on" data-sort="new">الأحدث</button><button class="chip sm" data-sort="lo">الأرخص الأول</button><button class="chip sm" data-sort="hi">الأغلى الأول</button></div><div class="chips subs" id="prange"><button class="chip sm on" data-pr="">كل الأسعار</button><button class="chip sm" data-pr="0-100">أقل من ١٠٠</button><button class="chip sm" data-pr="100-250">١٠٠ - ٢٥٠</button><button class="chip sm" data-pr="250-500">٢٥٠ - ٥٠٠</button><button class="chip sm" data-pr="500-1000">٥٠٠ - ١٠٠٠</button><button class="chip sm" data-pr="1000-">أكتر من ١٠٠٠</button></div></div><div id="grid"></div></div></section>
 <section id="policy"><div class="wrap"><h2>التوصيل والاسترجاع</h2><div class="policy"><ul>
 <li><b>الدفع:</b> عند الاستلام فقط، ما فيش دفع أونلاين.</li>
 <li><b>التوصيل:</b> لكل المحافظات. مصاريف الشحن بتتحسب وبتتأكد معاك في مكالمة تأكيد الطلب قبل الشحن.</li>
@@ -161,10 +165,10 @@ async function loadStock(){try{const r=await fetch(C.STOCK_URL+"&_="+Date.now())
 let cart=[];try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
 const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
-let cat="الكل";let sub="الكل";
+let cat="الكل";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="ea9ecb96";
+const DV="f3a91c02";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const f of new Set(Object.values(IDX.map||{}))){await loadCat(f)}cats();grid()}
@@ -172,13 +176,16 @@ const Q=()=>{const e=document.getElementById("q");return e?e.value.trim():""};
 function match(p,q){return !q||p.name.indexOf(q)>-1||((window.DESC&&DESC[p.id])||"").indexOf(q)>-1}
 function cats(){const cnt=c=>PV().filter(p=>liveStock(p)>0&&(c==="الكل"||p.cat===c)).length;const nm=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const cs=["الكل"].concat(nm.filter(c=>cnt(c)>0||c===cat));$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span class="cnt">(${cnt(c)})</span><\/button>`).join("");const t=$("#ptot");if(t)t.textContent=cnt("الكل")+" منتج معروض";
 const sc=$("#subcats");if(sc){if(cat==="الكل"){sc.innerHTML=""}else{const ce=IDX&&IDX.cats.find(x=>x.n===cat);const snames=ce&&ce.subs?ce.subs.map(s=>s.n):[...new Set(PV().filter(p=>p.cat===cat).map(p=>p.sub||""))];const scnt=s=>PV().filter(p=>liveStock(p)>0&&p.cat===cat&&(p.sub||"")===s).length;const ss=["الكل"].concat(snames.filter(s=>scnt(s)>0||s===sub));sc.innerHTML=ss.map(s=>`<button class="chip sm ${s===sub?"on":""}" data-s="${s}">${s} <span class="cnt">(${s==="الكل"?cnt(cat):scnt(s)})</span><\/button>`).join("")}}
+const sc2=$("#subcats2");if(sc2){if(cat==="الكل"||sub==="الكل"){sc2.innerHTML=""}else{const ce=IDX&&IDX.cats.find(x=>x.n===cat);const se=ce&&ce.subs&&ce.subs.find(x=>x.n===sub);const knames=se&&se.kids?se.kids.map(k=>k.n):[];const kcnt=k=>PV().filter(p=>liveStock(p)>0&&p.cat===cat&&(p.sub||"")===sub&&(p.sub3||"")===k).length;const allc=PV().filter(p=>liveStock(p)>0&&p.cat===cat&&(p.sub||"")===sub).length;const ks=["الكل"].concat(knames.filter(k=>kcnt(k)>0||k===sub3));sc2.innerHTML=ks.length>1?ks.map(k=>`<button class="chip xs ${k===sub3?"on":""}" data-l="${k}">${k} <span class="cnt">(${k==="الكل"?allc:kcnt(k)})</span><\/button>`).join(""):""}}
  const bar=$("#catbar");if(bar)bar.innerHTML=["الكل"].concat((IDX?IDX.cats.map(c=>c.n):[]).filter(c=>cnt(c)>0||c===cat)).map(c=>`<button class="${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span style="opacity:.6">(${cnt(c)})</span><\/button>`).join("");}
-function grid(){const q=Q();const order=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const pool=PV().filter(p=>match(p,q));const empty=q?`<p class="empty">مفيش نتائج للبحث ده.<\/p>`:`<p class="empty">مفيش منتجات في القسم ده لسه، بنجهزه وبننزله قريب.<\/p>`;
-if(cat==="الكل"){const cs=order.filter(c=>pool.some(p=>p.cat===c));$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${pool.filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")||empty;return}
+function grid(){const q=Q();const order=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const inR=p=>{if(!prange)return true;const a=prange.split("-");const lo=+a[0]||0;const hi=a[1]?+a[1]:Infinity;const x=price(p);return x>=lo&&x<hi};const srt=a=>sortMode==="lo"?a.slice().sort((x,y)=>price(x)-price(y)):sortMode==="hi"?a.slice().sort((x,y)=>price(y)-price(x)):a;const pool=PV().filter(p=>match(p,q)&&inR(p));const empty=q?`<p class="empty">مفيش نتائج للبحث ده.<\/p>`:`<p class="empty">مفيش منتجات في القسم ده لسه، بنجهزه وبننزله قريب.<\/p>`;
+if(cat==="الكل"){const cs=order.filter(c=>pool.some(p=>p.cat===c));$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${srt(pool.filter(p=>p.cat===c)).map(card).join("")}<\/div>`).join("")||empty;return}
 const ce=IDX&&IDX.cats.find(x=>x.n===cat);const sorder=ce&&ce.subs?ce.subs.map(s=>s.n):[...new Set(pool.filter(p=>p.cat===cat).map(p=>p.sub||""))];
-const spool=pool.filter(p=>p.cat===cat&&(sub==="الكل"||(p.sub||"")===sub));
+const spool=pool.filter(p=>p.cat===cat&&(sub==="الكل"||(p.sub||"")===sub)&&(sub3==="الكل"||(p.sub3||"")===sub3));
+if(sub!=="الكل"){if(sub3!=="الكل"){$("#grid").innerHTML=spool.length?`<div class="pgrid">${srt(spool).map(card).join("")}<\/div>`:empty;return}
+const se=ce&&ce.subs&&ce.subs.find(x=>x.n===sub);if(se&&se.kids){const korder=se.kids.map(k=>k.n);const ks=korder.filter(k=>spool.some(p=>(p.sub3||"")===k));const rest=spool.filter(p=>!korder.includes(p.sub3||""));$("#grid").innerHTML=(ks.map(k=>`<h3 class="csec">${k}<\/h3><div class="pgrid">${srt(spool.filter(p=>(p.sub3||"")===k)).map(card).join("")}<\/div>`).join("")+(rest.length?`<div class="pgrid">${srt(rest).map(card).join("")}<\/div>`:""))||empty;return}}
 const cs=sub==="الكل"?sorder.filter(s=>spool.some(p=>(p.sub||"")===s)):[sub];
-$("#grid").innerHTML=cs.map(s=>`<h3 class="csec">${s}<\/h3><div class="pgrid">${spool.filter(p=>(p.sub||"")===s).map(card).join("")}<\/div>`).join("")||empty;}
+$("#grid").innerHTML=cs.map(s=>`<h3 class="csec">${s}<\/h3><div class="pgrid">${srt(spool.filter(p=>(p.sub||"")===s)).map(card).join("")}<\/div>`).join("")||empty;}
 function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy" decoding="async"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${p.insp?`<span class="insp">معاينة عند الاستلام<\/span>`:""}${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
 function loadGal(p){const g=(p.gal||[]).filter(u=>u&&u!==IM(p));const t=document.getElementById("thumbs");if(!t||!g.length)return;const all=[IM(p)].concat(g);t.innerHTML=all.map((u,i)=>`<img src="${u}" data-i="${i}" alt="" class="${i?"":"on"}" loading="lazy" decoding="async">`).join("");t.onclick=e=>{const im=e.target.closest("img");if(!im)return;document.getElementById("mimg").src=all[+im.dataset.i];[...t.children].forEach(c=>c.classList.toggle("on",c===im))}}
 function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
@@ -230,10 +237,13 @@ function boot(){
   })();
 }
 document.addEventListener("click",e=>{const t=e.target;
-if(t.dataset&&t.dataset.s){sub=t.dataset.s;cats();grid();return}
-if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
-if(t.id==="docsbtn"){cat="ركن الدكاترة";sub="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
-if(t.dataset.c){cat=t.dataset.c;sub="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}}
+if(t.dataset&&t.dataset.l){sub3=t.dataset.l;cats();grid();return}
+if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll("#psort .chip").forEach(b=>b.classList.toggle("on",b.dataset.sort===sortMode));grid();return}
+if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
+if(t.dataset&&t.dataset.s){sub=t.dataset.s;sub3="الكل";cats();grid();return}
+if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.id==="docsbtn"){cat="ركن الدكاترة";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}}
 if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
 if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
