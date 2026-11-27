@@ -55,6 +55,7 @@ footer{padding:32px 0;text-align:center;color:#6b7280;font-size:14px}
 .csec{margin:26px 0 12px;color:var(--navy);font-size:20px;border-right:5px solid var(--orange);padding-right:10px}.desc{white-space:pre-line;font-size:14px;line-height:1.7;color:#333;margin:10px 0;max-height:190px;overflow:auto;background:#faf6ee;border-radius:10px;padding:10px}
 .chip.on{background:var(--navy);color:#fff}
 .pgrid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.insp{display:inline-block;background:#eef7ee;color:#1c6b3a;border:1px solid #bfe0c8;border-radius:6px;font-size:12px;padding:2px 8px;margin-top:6px}
 .pcard{background:#fff;border:1px solid #eadfce;border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
 .pcard img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f3ede2}
 .pb{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
@@ -161,7 +162,7 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="e67f5ada";
+const DV="5dbe3f68";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const c of IDX.cats){await loadCat(c.f)}cats();grid()}
@@ -170,8 +171,7 @@ function match(p,q){return !q||p.name.indexOf(q)>-1||((window.DESC&&DESC[p.id])|
 function cats(){const cnt=c=>PV().filter(p=>liveStock(p)>0&&(c==="الكل"||p.cat===c)).length;const nm=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const cs=["الكل"].concat(nm.filter(c=>cnt(c)>0||c===cat));$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span class="cnt">(${cnt(c)})</span><\/button>`).join("");const t=$("#ptot");if(t)t.textContent=cnt("الكل")+" منتج معروض";
  const bar=$("#catbar");if(bar)bar.innerHTML=["الكل"].concat((IDX?IDX.cats.map(c=>c.n):[]).filter(c=>cnt(c)>0||c===cat)).map(c=>`<button class="${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span style="opacity:.6">(${cnt(c)})</span><\/button>`).join("");}
 function grid(){const q=Q();const order=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const pool=PV().filter(p=>match(p,q));const cs=cat==="الكل"?order.filter(c=>pool.some(p=>p.cat===c)):[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${pool.filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")||(q?`<p class="empty">مفيش نتائج للبحث ده.<\/p>`:`<p class="empty">مفيش منتجات في القسم ده لسه، بنجهزه وبننزله قريب.<\/p>`);}
-function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy" decoding="async"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
-function grid(){const cs=cat==="الكل"?[...new Set(PV().map(p=>p.cat))]:[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${PV().filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")}
+function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy" decoding="async"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${p.insp?`<span class="insp">معاينة عند الاستلام<\/span>`:""}${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
 function loadGal(p){const g=(p.gal||[]).filter(u=>u&&u!==IM(p));const t=document.getElementById("thumbs");if(!t||!g.length)return;const all=[IM(p)].concat(g);t.innerHTML=all.map((u,i)=>`<img src="${u}" data-i="${i}" alt="" class="${i?"":"on"}" loading="lazy" decoding="async">`).join("");t.onclick=e=>{const im=e.target.closest("img");if(!im)return;document.getElementById("mimg").src=all[+im.dataset.i];[...t.children].forEach(c=>c.classList.toggle("on",c===im))}}
 function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
 $("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img id="mimg" src="${IM(p)}" alt="${p.name}"><div id="thumbs" class="thumbs"><\/div><h2>${p.name}<\/h2><div class="pr">${pHTML(p)}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");loadGal(p);
