@@ -29,6 +29,8 @@ nav{display:flex;gap:20px;font-size:15px;color:var(--navy)}
 .doctag{display:inline-block;background:var(--orange);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
 .docsband .btn{background:#fff;color:var(--navy);border:0}
 .chip.doc{border-color:var(--orange);color:var(--orange);font-weight:800}
+.chip .cnt{opacity:.55;font-size:.92em;font-weight:600}
+.tot{font-size:.5em;color:var(--orange);font-weight:700;margin-inline-start:6px}
 
 section{padding:48px 0}
 h2{font-size:28px;color:var(--navy);margin-bottom:24px;text-align:center}
@@ -104,7 +106,7 @@ select,input,textarea{font:inherit;padding:10px;border:1px solid #d9cdb9;border-
 <p>سكرابات، بالطو، سماعات وأدوات، وكل اللي الطبيب وطالب الطب محتاجه في مكان واحد — دفع عند الاستلام والتوصيل لكل المحافظات.</p></div>
 <button class="btn" id="docsbtn">اتفرج على الركن</button>
 </div></div></section>
-<section id="products"><div class="wrap"><h2>المنتجات</h2><div class="chips" id="cats"></div><div id="grid"></div></div></section>
+<section id="products"><div class="wrap"><h2>المنتجات <span class="tot" id="tot"></span></h2><div class="chips" id="cats"></div><div id="grid"></div></div></section>
 <section id="policy"><div class="wrap"><h2>التوصيل والاسترجاع</h2><div class="policy"><ul>
 <li><b>الدفع:</b> عند الاستلام فقط، ما فيش دفع أونلاين.</li>
 <li><b>التوصيل:</b> لكل المحافظات. مصاريف الشحن بتتحسب وبتتأكد معاك في مكالمة تأكيد الطلب قبل الشحن.</li>
@@ -145,6 +147,7 @@ const IM=p=>p.img||((window.IMGS||{})[p.id]||"");
 let LIVE=null;
 const key=(p,o)=>p.id+"|"+o.join("|");
 const vars=p=>LIVE?p.variants.map(v=>[v[0],LIVE[key(p,v[0])]||0]).filter(v=>v[1]>0):p.variants;
+const liveStock=p=>{if(!LIVE)return p.stock||1;let s=0;(p.variants||[]).forEach(v=>{s+=Number(LIVE[key(p,v[0])])||0});return s};
 async function loadStock(){try{const r=await fetch(C.STOCK_URL+"&_="+Date.now());const t=await r.text();const j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));const m={};j.table.rows.forEach(x=>{if(x.c[0]&&x.c[1])m[x.c[0].v]=x.c[1].v});if(Object.keys(m).length){LIVE=m;return true}}catch(e){}return false}
 let cart=[];try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
@@ -152,13 +155,13 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="7c818344";
+const DV="13d3117d";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const c of IDX.cats){await loadCat(c.f)}cats();grid()}
 const Q=()=>{const e=document.getElementById("q");return e?e.value.trim():""};
 function match(p,q){return !q||p.name.indexOf(q)>-1||((window.DESC&&DESC[p.id])||"").indexOf(q)>-1}
-function cats(){const cs=["الكل"].concat(IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))]);$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c}<\/button>`).join("");}
+function cats(){const cnt=c=>PV().filter(p=>liveStock(p)>0&&(c==="الكل"||p.cat===c)).length;const cs=["الكل"].concat(IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))]);$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span class="cnt">(${cnt(c)})</span><\/button>`).join("");const t=$("#tot");if(t)t.textContent=cnt("الكل")+" منتج معروض";}
 function grid(){const q=Q();const order=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const pool=PV().filter(p=>match(p,q));const cs=cat==="الكل"?order.filter(c=>pool.some(p=>p.cat===c)):[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${pool.filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")||(q?`<p class="empty">مفيش نتائج للبحث ده.<\/p>`:`<p class="empty">مفيش منتجات في القسم ده لسه، بنجهزه وبننزله قريب.<\/p>`);}
 function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy" decoding="async"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
 function grid(){const cs=cat==="الكل"?[...new Set(PV().map(p=>p.cat))]:[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${PV().filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")}
