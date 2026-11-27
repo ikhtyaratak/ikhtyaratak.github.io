@@ -168,7 +168,7 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="f3a91c02";
+const DV="b7e24d19";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const f of new Set(Object.values(IDX.map||{}))){await loadCat(f)}cats();grid()}
@@ -179,9 +179,11 @@ const sc=$("#subcats");if(sc){if(cat==="الكل"){sc.innerHTML=""}else{const ce
 const sc2=$("#subcats2");if(sc2){if(cat==="الكل"||sub==="الكل"){sc2.innerHTML=""}else{const ce=IDX&&IDX.cats.find(x=>x.n===cat);const se=ce&&ce.subs&&ce.subs.find(x=>x.n===sub);const knames=se&&se.kids?se.kids.map(k=>k.n):[];const kcnt=k=>PV().filter(p=>liveStock(p)>0&&p.cat===cat&&(p.sub||"")===sub&&(p.sub3||"")===k).length;const allc=PV().filter(p=>liveStock(p)>0&&p.cat===cat&&(p.sub||"")===sub).length;const ks=["الكل"].concat(knames.filter(k=>kcnt(k)>0||k===sub3));sc2.innerHTML=ks.length>1?ks.map(k=>`<button class="chip xs ${k===sub3?"on":""}" data-l="${k}">${k} <span class="cnt">(${k==="الكل"?allc:kcnt(k)})</span><\/button>`).join(""):""}}
  const bar=$("#catbar");if(bar)bar.innerHTML=["الكل"].concat((IDX?IDX.cats.map(c=>c.n):[]).filter(c=>cnt(c)>0||c===cat)).map(c=>`<button class="${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span style="opacity:.6">(${cnt(c)})</span><\/button>`).join("");}
 function grid(){const q=Q();const order=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const inR=p=>{if(!prange)return true;const a=prange.split("-");const lo=+a[0]||0;const hi=a[1]?+a[1]:Infinity;const x=price(p);return x>=lo&&x<hi};const srt=a=>sortMode==="lo"?a.slice().sort((x,y)=>price(x)-price(y)):sortMode==="hi"?a.slice().sort((x,y)=>price(y)-price(x)):a;const pool=PV().filter(p=>match(p,q)&&inR(p));const empty=q?`<p class="empty">مفيش نتائج للبحث ده.<\/p>`:`<p class="empty">مفيش منتجات في القسم ده لسه، بنجهزه وبننزله قريب.<\/p>`;
-if(cat==="الكل"){const cs=order.filter(c=>pool.some(p=>p.cat===c));$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${srt(pool.filter(p=>p.cat===c)).map(card).join("")}<\/div>`).join("")||empty;return}
+if(cat==="الكل"){if(sortMode!=="new"){$("#grid").innerHTML=pool.length?`<div class="pgrid">${srt(pool).map(card).join("")}<\/div>`:empty;return}
+const cs=order.filter(c=>pool.some(p=>p.cat===c));$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${srt(pool.filter(p=>p.cat===c)).map(card).join("")}<\/div>`).join("")||empty;return}
 const ce=IDX&&IDX.cats.find(x=>x.n===cat);const sorder=ce&&ce.subs?ce.subs.map(s=>s.n):[...new Set(pool.filter(p=>p.cat===cat).map(p=>p.sub||""))];
 const spool=pool.filter(p=>p.cat===cat&&(sub==="الكل"||(p.sub||"")===sub)&&(sub3==="الكل"||(p.sub3||"")===sub3));
+if(sortMode!=="new"){$("#grid").innerHTML=spool.length?`<div class="pgrid">${srt(spool).map(card).join("")}<\/div>`:empty;return}
 if(sub!=="الكل"){if(sub3!=="الكل"){$("#grid").innerHTML=spool.length?`<div class="pgrid">${srt(spool).map(card).join("")}<\/div>`:empty;return}
 const se=ce&&ce.subs&&ce.subs.find(x=>x.n===sub);if(se&&se.kids){const korder=se.kids.map(k=>k.n);const ks=korder.filter(k=>spool.some(p=>(p.sub3||"")===k));const rest=spool.filter(p=>!korder.includes(p.sub3||""));$("#grid").innerHTML=(ks.map(k=>`<h3 class="csec">${k}<\/h3><div class="pgrid">${srt(spool.filter(p=>(p.sub3||"")===k)).map(card).join("")}<\/div>`).join("")+(rest.length?`<div class="pgrid">${srt(rest).map(card).join("")}<\/div>`:""))||empty;return}}
 const cs=sub==="الكل"?sorder.filter(s=>spool.some(p=>(p.sub||"")===s)):[sub];
