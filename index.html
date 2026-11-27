@@ -108,7 +108,7 @@ select,input,textarea{font:inherit;padding:10px;border:1px solid #d9cdb9;border-
 <div class="modal" id="cart"><div class="mbox"><button class="x" data-close>×</button><h2>سلة المشتريات</h2><div id="items"></div><div class="tot"><span>الإجمالي</span><span id="tot"></span></div><button class="btn" id="co" style="width:100%">إتمام الطلب</button></div></div>
 <div class="modal" id="checkout"><div class="mbox"><button class="x" data-close>×</button><h2>بيانات التوصيل</h2><p id="sum" style="margin-bottom:10px"></p>
 <form id="orderform" class="fgrid"><label>الاسم بالكامل<input name="name" required></label><label>رقم الموبايل<input name="phone" inputmode="tel" required placeholder="01xxxxxxxxx"></label><label>المحافظة<select id="gov" name="gov" required></select></label><label>المنطقة<select id="area" name="area" required></select></label><label>العنوان بالتفصيل<input name="address" required></label><label>ملاحظات للشحن (اختياري)<textarea name="notes" rows="2"></textarea></label><button class="btn" id="send" type="submit">تأكيد الطلب</button><div id="msg"></div></form></div></div>
-<script src="imgs1.js"></script><script src="imgs2.js"></script><script src="imgs3.js"></script><script>// الإعدادات
+<script src="imgs1.js"></script><script src="imgs2.js"></script><script src="imgs3.js?v=2"></script><script>// الإعدادات
 window.CONFIG={
   MARKUP:30,            // زيادة السعر على كل قطعة بالجنيه (سعر أنجزني + الزيادة = سعر العميل)
   ORDERS_URL:"https://script.google.com/macros/s/AKfycbxl1n61s422PY0QonrI-6vgPk-2I9gvqXb1Q4WLqkcYVscqpirSIHKTF3CtlrbwS0Bh/exec",        // رابط Google Apps Script اللي بيسجل الطلبات في الشيت
