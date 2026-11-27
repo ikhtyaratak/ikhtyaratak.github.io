@@ -179,7 +179,7 @@ if(t.id==="cartbtn")$("#cart").classList.toggle("open");
 if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إجمالي الطلب: "+fmt(total())+" (الدفع عند الاستلام)";$("#checkout").classList.add("open")}});
 $("#orderform").addEventListener("submit",submit);
 cats();grid();renderCart();form();loadStock().then(ok=>{if(ok){cats();grid();renderCart()}});
-function deep(){const m=location.hash.match(/^#p(\d+)$/);if(m&&P.find(x=>x.id===m[1]))openProduct(m[1])}
+function deep(){const m=location.hash.match(/^#p(\d+)$/);const q=m&&P.find(x=>x.id===m[1]||x.sid===m[1]);if(q)openProduct(q.id)}
 deep();window.addEventListener("hashchange",deep);
 document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
 })();
