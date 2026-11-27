@@ -40,6 +40,7 @@ nav{display:flex;gap:20px;font-size:15px;color:var(--navy)}
 section{padding:48px 0}
 h2{font-size:28px;color:var(--navy);margin-bottom:24px;text-align:center}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.pol{background:#fff8ef;border:1px solid #eadfce;border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.9;color:#5b4a2f}
 .card{background:#fff;border-radius:18px;padding:24px;border:1px solid #eadfce}
 .card .ic{font-size:28px;font-weight:800;color:var(--orange)}
 .card h3{color:var(--navy);margin:6px 0 4px;font-size:19px}
@@ -135,7 +136,7 @@ select,input,textarea{font:inherit;padding:10px;border:1px solid #d9cdb9;border-
 <footer>© اختياراتك، كل يوم حاجة تستاهل · mahmoudjdkd8@gmail.com</footer>
 <div class="modal" id="pm"></div><div class="modal" id="done"></div>
 <div class="modal" id="cart"><div class="mbox"><button class="x" data-close>×</button><h2>سلة المشتريات</h2><div id="items"></div><div class="tot"><span>الإجمالي</span><span id="tot"></span></div><button class="btn" id="co" style="width:100%">إتمام الطلب</button></div></div>
-<div class="modal" id="checkout"><div class="mbox"><button class="x" data-close>×</button><h2>بيانات التوصيل</h2><p id="sum" style="margin-bottom:10px"></p>
+<div class="modal" id="checkout"><div class="mbox"><button class="x" data-close>×</button><h2>بيانات التوصيل</h2><div class="pol" style="margin-bottom:12px">• الدفع كاش عند الاستلام، ومفيش أي دفع مقدم.<br>• التوصيل عادةً من 2 لـ 5 أيام عمل حسب المحافظة، والشحن بيتم عن طريق موردينا المعتمدين مباشرة.<br>• مصاريف الشحن بتتحدد حسب المحافظة وبنأكدها معاك تليفونياً قبل تنفيذ الطلب.<br>• بعض منتجاتنا مستوردة وبتتشحن من مخازن المورد.<br>• الاستبدال والاسترجاع متاحين لو المنتج وصل معيب أو غلط؛ مفيش استرجاع لتغيير الرأي في المنتجات اللي سياسة المورد مبتسمحش فيها، وهنوضحلك ده عند التأكيد.</div><p id="sum" style="margin-bottom:10px"></p>
 <form id="orderform" class="fgrid"><label>الاسم بالكامل<input name="name" required></label><label>رقم الموبايل<input name="phone" inputmode="tel" required placeholder="01xxxxxxxxx"></label><label>المحافظة<select id="gov" name="gov" required></select></label><label>المنطقة<select id="area" name="area" required></select></label><label>العنوان بالتفصيل<input name="address" required></label><label>ملاحظات للشحن (اختياري)<textarea name="notes" rows="2"></textarea></label><button class="btn" id="send" type="submit">تأكيد الطلب</button><div id="msg"></div></form></div></div>
 <script>// الإعدادات
 window.CONFIG={
@@ -168,7 +169,7 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="b017d783";
+const DV="3569decb";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const f of new Set(Object.values(IDX.map||{}))){await loadCat(f)}cats();grid()}
@@ -191,7 +192,7 @@ $("#grid").innerHTML=cs.map(s=>`<h3 class="csec">${s}<\/h3><div class="pgrid">${
 function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy" decoding="async"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${p.insp?`<span class="insp">معاينة عند الاستلام<\/span>`:""}${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
 function loadGal(p){const g=(p.gal||[]).filter(u=>u&&u!==IM(p));const t=document.getElementById("thumbs");if(!t||!g.length)return;const all=[IM(p)].concat(g);t.innerHTML=all.map((u,i)=>`<img src="${u}" data-i="${i}" alt="" class="${i?"":"on"}" loading="lazy" decoding="async">`).join("");t.onclick=e=>{const im=e.target.closest("img");if(!im)return;document.getElementById("mimg").src=all[+im.dataset.i];[...t.children].forEach(c=>c.classList.toggle("on",c===im))}}
 function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
-$("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img id="mimg" src="${IM(p)}" alt="${p.name}"><div id="thumbs" class="thumbs"><\/div><h2>${p.name}<\/h2><div class="pr">${pHTML(p)}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");loadGal(p);
+$("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img id="mimg" src="${IM(p)}" alt="${p.name}"><div id="thumbs" class="thumbs"><\/div><h2>${p.name}<\/h2><div class="pr">${pHTML(p)}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><div class="pol" style="margin:10px 0">الدفع عند الاستلام · الشحن عن طريق موردينا المعتمدين خلال 2-5 أيام عمل حسب المحافظة · بعض المنتجات مستوردة · الاستبدال والاسترجاع للعيب أو الغلط حسب سياسة المورد<\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");loadGal(p);
 const sels=[...document.querySelectorAll("#pm select")];
 function fill(i){const prefix=sels.slice(0,i).map(s=>s.value);const vals=[...new Set(vars(p).filter(v=>prefix.every((x,j)=>v[0][j]===x)).map(v=>v[0][i]))];const cur=sels[i].value;sels[i].innerHTML=vals.map(x=>`<option value="${x}" ${x===cur?"selected":""}>${x==="default"?"عادي":x==="One size"?"مقاس واحد":x.replace(/^\./,"")}<\/option>`).join("");if(i+1<sels.length)fill(i+1);}
 sels.forEach((s,i)=>s.onchange=()=>{if(i+1<sels.length)fill(i+1)});fill(0);
