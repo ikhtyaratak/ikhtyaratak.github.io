@@ -111,6 +111,7 @@ select,input,textarea{font:inherit;padding:10px;border:1px solid #d9cdb9;border-
 window.CONFIG={
   MARKUP:30,            // زيادة السعر على كل قطعة بالجنيه (سعر أنجزني + الزيادة = سعر العميل)
   ORDERS_URL:"https://script.google.com/macros/s/AKfycbxl1n61s422PY0QonrI-6vgPk-2I9gvqXb1Q4WLqkcYVscqpirSIHKTF3CtlrbwS0Bh/exec",        // رابط Google Apps Script اللي بيسجل الطلبات في الشيت
+  STOCK_URL:"https://docs.google.com/spreadsheets/d/1Myj4RFolzDBxLjCNHBWxl1XYSjlmzUZ-RLF4dYZmhq8/gviz/tq?tqx=out:json&sheet=Stock",
   MESSENGER:"https://m.me/61596099963103",
   FB_PAGE:"https://www.facebook.com/profile.php?id=61596099963103",
   CURRENCY:"جنيه"
@@ -124,18 +125,22 @@ const C=window.CONFIG,P=window.PRODUCTS;
 const $=s=>document.querySelector(s);
 const price=p=>p.base+(p.markup==null?C.MARKUP:p.markup);
 const AR=window.AREAS;
+let LIVE=null;
+const key=(p,o)=>p.id+"|"+o.join("|");
+const vars=p=>LIVE?p.variants.map(v=>[v[0],LIVE[key(p,v[0])]||0]).filter(v=>v[1]>0):p.variants;
+async function loadStock(){try{const r=await fetch(C.STOCK_URL+"&_="+Date.now());const t=await r.text();const j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));const m={};j.table.rows.forEach(x=>{if(x.c[0]&&x.c[1])m[x.c[0].v]=x.c[1].v});if(Object.keys(m).length){LIVE=m;return true}}catch(e){}return false}
 let cart=[];try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
 const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";
 function cats(){const cs=["الكل",...new Set(P.map(p=>p.cat))];$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}<\/button>`).join("");}
-function grid(){$("#grid").innerHTML=P.filter(p=>cat==="الكل"||p.cat===cat).map(p=>`<article class="pcard"><img src="${p.img}" alt="${p.name}" loading="lazy"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${fmt(price(p))}<\/div><button class="btn sm" data-id="${p.id}">اختار واطلب<\/button><\/div><\/article>`).join("");}
+function grid(){$("#grid").innerHTML=P.filter(p=>cat==="الكل"||p.cat===cat).map(p=>`<article class="pcard"><img src="${p.img}" alt="${p.name}" loading="lazy"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${fmt(price(p))}<\/div>${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`).join("");}
 function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
 $("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img src="${p.img}" alt="${p.name}"><h2>${p.name}<\/h2><div class="pr">${fmt(price(p))}<\/div><div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");
 const sels=[...document.querySelectorAll("#pm select")];
-function fill(i){const prefix=sels.slice(0,i).map(s=>s.value);const vals=[...new Set(p.variants.filter(v=>prefix.every((x,j)=>v[0][j]===x)).map(v=>v[0][i]))];const cur=sels[i].value;sels[i].innerHTML=vals.map(x=>`<option ${x===cur?"selected":""}>${x}<\/option>`).join("");if(i+1<sels.length)fill(i+1);}
+function fill(i){const prefix=sels.slice(0,i).map(s=>s.value);const vals=[...new Set(vars(p).filter(v=>prefix.every((x,j)=>v[0][j]===x)).map(v=>v[0][i]))];const cur=sels[i].value;sels[i].innerHTML=vals.map(x=>`<option ${x===cur?"selected":""}>${x}<\/option>`).join("");if(i+1<sels.length)fill(i+1);}
 sels.forEach((s,i)=>s.onchange=()=>{if(i+1<sels.length)fill(i+1)});fill(0);
-$("#add").onclick=()=>{const opts={};sels.forEach(s=>opts[names[+s.dataset.i]]=s.value);const vr=p.variants.find(v=>names.every((n,j)=>v[0][j]===opts[n]));const q=Math.max(1,Math.min(10,Math.floor(+$("#qty").value)||1));if(!vr){$("#pmsg").textContent="الاختيار ده مش متاح.";return}
+$("#add").onclick=()=>{const opts={};sels.forEach(s=>opts[names[+s.dataset.i]]=s.value);const vr=vars(p).find(v=>names.every((n,j)=>v[0][j]===opts[n]));const q=Math.max(1,Math.min(10,Math.floor(+$("#qty").value)||1));if(!vr){$("#pmsg").textContent="الاختيار ده مش متاح.";return}
 const inCart=cart.filter(c=>c.id===id&&names.every(n=>c.opts[n]===opts[n])).reduce((s,c)=>s+c.q,0);if(inCart+q>Math.min(10,vr[1])){$("#pmsg").textContent="الكمية المتاحة من الاختيار ده محدودة.";return}
 cart.push({id,opts,q});save();closeM();renderCart();$("#cart").classList.add("open");};}
 function closeM(){$("#pm").classList.remove("open")}
@@ -148,6 +153,7 @@ g.onchange=()=>{$("#area").innerHTML="<option value=''>اختار المنطقة
 async function submit(e){e.preventDefault();const f=e.target;const phone=f.phone.value.replace(/\s/g,"");
 if(!/^01[0125][0-9]{8}$/.test(phone)){$("#msg").textContent="رقم الموبايل لازم يبقى 11 رقم ويبدأ بـ 01.";return}
 if(!cart.length||!f.gov.value||!f.area.value){$("#msg").textContent="اختار المحافظة والمنطقة.";return}
+await loadStock();for(const i of cart){const p=P.find(x=>x.id===i.id);const vr=vars(p).find(v=>p.optnames.every((n,j)=>v[0][j]===i.opts[n]));if(!vr||vr[1]<i.q){$("#msg").textContent="للأسف \""+p.name+"\" ("+Object.values(i.opts).join(" - ")+") مبقاش متاح بالكمية دي. شيله من السلة أو غيّر الاختيار.";return}}
 const id="E"+Date.now().toString(36).toUpperCase();
 const order={orderId:id,time:new Date().toISOString(),name:f.name.value.trim(),phone,governorate:f.gov.value,area:f.area.value,address:f.address.value.trim(),notes:f.notes.value.trim(),items:cart.map(i=>{const p=P.find(x=>x.id===i.id);return{productId:p.id,name:p.name,options:i.opts,qty:i.q,unitPrice:price(p),angaznyPrice:p.base}}),total:total(),payment:"الدفع عند الاستلام"};
 const btn=$("#send");btn.disabled=true;btn.textContent="جاري الإرسال...";
@@ -163,7 +169,7 @@ if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
 if(t.id==="cartbtn")$("#cart").classList.toggle("open");
 if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إجمالي الطلب: "+fmt(total())+" (الدفع عند الاستلام)";$("#checkout").classList.add("open")}});
 $("#orderform").addEventListener("submit",submit);
-cats();grid();renderCart();form();
+cats();grid();renderCart();form();loadStock().then(ok=>{if(ok){grid();renderCart()}});
 document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
 })();
 </script></body></html>
