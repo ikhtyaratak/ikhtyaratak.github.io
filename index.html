@@ -142,7 +142,7 @@ function grid(){const cs=cat==="الكل"?[...new Set(P.map(p=>p.cat))]:[cat];$(
 function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
 $("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img src="${IM(p)}" alt="${p.name}"><h2>${p.name}<\/h2><div class="pr">${fmt(price(p))}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");
 const sels=[...document.querySelectorAll("#pm select")];
-function fill(i){const prefix=sels.slice(0,i).map(s=>s.value);const vals=[...new Set(vars(p).filter(v=>prefix.every((x,j)=>v[0][j]===x)).map(v=>v[0][i]))];const cur=sels[i].value;sels[i].innerHTML=vals.map(x=>`<option value="${x}" ${x===cur?"selected":""}>${x.replace(/^\./,"")}<\/option>`).join("");if(i+1<sels.length)fill(i+1);}
+function fill(i){const prefix=sels.slice(0,i).map(s=>s.value);const vals=[...new Set(vars(p).filter(v=>prefix.every((x,j)=>v[0][j]===x)).map(v=>v[0][i]))];const cur=sels[i].value;sels[i].innerHTML=vals.map(x=>`<option value="${x}" ${x===cur?"selected":""}>${x==="default"?"عادي":x.replace(/^\./,"")}<\/option>`).join("");if(i+1<sels.length)fill(i+1);}
 sels.forEach((s,i)=>s.onchange=()=>{if(i+1<sels.length)fill(i+1)});fill(0);
 $("#add").onclick=()=>{const opts={};sels.forEach(s=>opts[names[+s.dataset.i]]=s.value);const vr=vars(p).find(v=>names.every((n,j)=>v[0][j]===opts[n]));const q=Math.max(1,Math.min(10,Math.floor(+$("#qty").value)||1));if(!vr){$("#pmsg").textContent="الاختيار ده مش متاح.";return}
 const inCart=cart.filter(c=>c.id===id&&names.every(n=>c.opts[n]===opts[n])).reduce((s,c)=>s+c.q,0);if(inCart+q>Math.min(10,vr[1])){$("#pmsg").textContent="الكمية المتاحة من الاختيار ده محدودة.";return}
@@ -150,14 +150,14 @@ cart.push({id,opts,q});save();closeM();renderCart();$("#cart").classList.add("op
 function closeM(){$("#pm").classList.remove("open")}
 const total=()=>cart.reduce((s,i)=>s+price(P.find(p=>p.id===i.id))*i.q,0);
 function renderCart(){$("#cc").textContent=cart.reduce((s,i)=>s+i.q,0);
-$("#items").innerHTML=cart.length?cart.map((i,n)=>{const p=P.find(x=>x.id===i.id);return `<div class="ci"><img src="${IM(p)}" alt=""><div><b>${p.name}<\/b><small>${Object.entries(i.opts).map(([k,v])=>k+": "+String(v).replace(/^\./,"")).join(" · ")}<\/small><small>${i.q} × ${fmt(price(p))}<\/small><\/div><button class="x2" data-rm="${n}">حذف<\/button><\/div>`}).join(""):"<p class='empty'>السلة فاضية.<\/p>";
+$("#items").innerHTML=cart.length?cart.map((i,n)=>{const p=P.find(x=>x.id===i.id);return `<div class="ci"><img src="${IM(p)}" alt=""><div><b>${p.name}<\/b><small>${Object.entries(i.opts).map(([k,v])=>k+": "+(v==="default"?"عادي":String(v).replace(/^\./,""))).join(" · ")}<\/small><small>${i.q} × ${fmt(price(p))}<\/small><\/div><button class="x2" data-rm="${n}">حذف<\/button><\/div>`}).join(""):"<p class='empty'>السلة فاضية.<\/p>";
 $("#tot").textContent=fmt(total());$("#co").disabled=!cart.length;}
 function form(){const g=$("#gov");g.innerHTML="<option value=''>اختار المحافظة<\/option>"+Object.keys(AR).map(x=>`<option>${x}<\/option>`).join("");
 g.onchange=()=>{$("#area").innerHTML="<option value=''>اختار المنطقة<\/option>"+(AR[g.value]||[]).map(x=>`<option>${x}<\/option>`).join("")};g.onchange();}
 async function submit(e){e.preventDefault();const f=e.target;const phone=f.phone.value.replace(/\s/g,"");
 if(!/^01[0125][0-9]{8}$/.test(phone)){$("#msg").textContent="رقم الموبايل لازم يبقى 11 رقم ويبدأ بـ 01.";return}
 if(!cart.length||!f.gov.value||!f.area.value){$("#msg").textContent="اختار المحافظة والمنطقة.";return}
-await loadStock();for(const i of cart){const p=P.find(x=>x.id===i.id);const vr=vars(p).find(v=>p.optnames.every((n,j)=>v[0][j]===i.opts[n]));if(!vr||vr[1]<i.q){$("#msg").textContent="للأسف \""+p.name+"\" ("+Object.values(i.opts).join(" - ")+") مبقاش متاح بالكمية دي. شيله من السلة أو غيّر الاختيار.";return}}
+await loadStock();for(const i of cart){const p=P.find(x=>x.id===i.id);const vr=vars(p).find(v=>p.optnames.every((n,j)=>v[0][j]===i.opts[n]));if(!vr||vr[1]<i.q){$("#msg").textContent="للأسف \""+p.name+"\" ("+Object.values(i.opts).map(v=>v==="default"?"عادي":v).join(" - ")+") مبقاش متاح بالكمية دي. شيله من السلة أو غيّر الاختيار.";return}}
 const id="E"+Date.now().toString(36).toUpperCase();
 const order={orderId:id,time:new Date().toISOString(),name:f.name.value.trim(),phone,governorate:f.gov.value,area:f.area.value,address:f.address.value.trim(),notes:f.notes.value.trim(),items:cart.map(i=>{const p=P.find(x=>x.id===i.id);return{productId:p.id,name:p.name,options:i.opts,qty:i.q,unitPrice:price(p),angaznyPrice:p.base}}),total:total(),payment:"الدفع عند الاستلام"};
 const btn=$("#send");btn.disabled=true;btn.textContent="جاري الإرسال...";
