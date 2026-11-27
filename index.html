@@ -23,6 +23,13 @@ nav{display:flex;gap:20px;font-size:15px;color:var(--navy)}
 .hero h1 span{color:var(--orange)}
 .hero p{max-width:560px;margin:16px auto 28px;font-size:18px}
 .hero .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.docsband{background:linear-gradient(135deg,#14284b,#22406f);color:#fff;border-radius:22px;padding:26px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 12px 32px rgba(20,40,75,.18)}
+.docsband h2{color:#fff;margin:8px 0 8px;font-size:clamp(22px,4vw,30px)}
+.docsband p{color:#e6ecf7;margin:0;max-width:540px;font-size:16px;line-height:1.7}
+.doctag{display:inline-block;background:var(--orange);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+.docsband .btn{background:#fff;color:var(--navy);border:0}
+.chip.doc{border-color:var(--orange);color:var(--orange);font-weight:800}
+
 section{padding:48px 0}
 h2{font-size:28px;color:var(--navy);margin-bottom:24px;text-align:center}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
@@ -92,6 +99,11 @@ select,input,textarea{font:inherit;padding:10px;border:1px solid #d9cdb9;border-
   <div class="card"><div class="ic">03</div><h3>جديد كل يوم</h3><p>منتجات وعروض بتتضاف باستمرار، تابعنا وماتفوتش حاجة.</p></div>
  </div>
 </div></section>
+<section id="docs"><div class="wrap"><div class="docsband">
+<div><span class="doctag">جديد</span><h2>ركن الدكاترة</h2>
+<p>سكرابات، بالطو، سماعات وأدوات، وكل اللي الطبيب وطالب الطب محتاجه في مكان واحد — دفع عند الاستلام والتوصيل لكل المحافظات.</p></div>
+<button class="btn" id="docsbtn">اتفرج على الركن</button>
+</div></div></section>
 <section id="products"><div class="wrap"><h2>المنتجات</h2><div class="chips" id="cats"></div><div id="grid"></div></div></section>
 <section id="policy"><div class="wrap"><h2>التوصيل والاسترجاع</h2><div class="policy"><ul>
 <li><b>الدفع:</b> عند الاستلام فقط، ما فيش دفع أونلاين.</li>
@@ -140,13 +152,13 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="8f0e0580";
+const DV="ec713de9";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const c of IDX.cats){await loadCat(c.f)}cats();grid()}
 const Q=()=>{const e=document.getElementById("q");return e?e.value.trim():""};
 function match(p,q){return !q||p.name.indexOf(q)>-1||((window.DESC&&DESC[p.id])||"").indexOf(q)>-1}
-function cats(){const cs=["الكل"].concat(IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))]);$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}<\/button>`).join("");}
+function cats(){const cs=["الكل"].concat(IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))]);$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c}<\/button>`).join("");}
 function grid(){const q=Q();const order=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const pool=PV().filter(p=>match(p,q));const cs=cat==="الكل"?order.filter(c=>pool.some(p=>p.cat===c)):[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${pool.filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")||(q?`<p class="empty">مفيش نتائج للبحث ده.<\/p>`:`<p class="empty">مفيش منتجات في القسم ده لسه، بنجهزه وبننزله قريب.<\/p>`);}
 function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy" decoding="async"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
 function grid(){const cs=cat==="الكل"?[...new Set(PV().map(p=>p.cat))]:[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${PV().filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")}
@@ -200,6 +212,7 @@ function boot(){
   })();
 }
 document.addEventListener("click",e=>{const t=e.target;
+if(t.id==="docsbtn"){cat="ركن الدكاترة";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
 if(t.dataset.c){cat=t.dataset.c;cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}}
 if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
