@@ -136,9 +136,10 @@ let cart=[];try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
 const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";
-function cats(){const cs=["الكل",...new Set(P.map(p=>p.cat))];$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}<\/button>`).join("");}
+const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
+function cats(){const cs=["الكل",...new Set(PV().map(p=>p.cat))];$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}<\/button>`).join("");}
 function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
-function grid(){const cs=cat==="الكل"?[...new Set(P.map(p=>p.cat))]:[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${P.filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")}
+function grid(){const cs=cat==="الكل"?[...new Set(PV().map(p=>p.cat))]:[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${PV().filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")}
 function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
 $("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img src="${IM(p)}" alt="${p.name}"><h2>${p.name}<\/h2><div class="pr">${pHTML(p)}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");
 const sels=[...document.querySelectorAll("#pm select")];
@@ -173,7 +174,7 @@ if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
 if(t.id==="cartbtn")$("#cart").classList.toggle("open");
 if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إجمالي الطلب: "+fmt(total())+" (الدفع عند الاستلام)";$("#checkout").classList.add("open")}});
 $("#orderform").addEventListener("submit",submit);
-cats();grid();renderCart();form();loadStock().then(ok=>{if(ok){grid();renderCart()}});
+cats();grid();renderCart();form();loadStock().then(ok=>{if(ok){cats();grid();renderCart()}});
 function deep(){const m=location.hash.match(/^#p(\d+)$/);if(m&&P.find(x=>x.id===m[1]))openProduct(m[1])}
 deep();window.addEventListener("hashchange",deep);
 document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
