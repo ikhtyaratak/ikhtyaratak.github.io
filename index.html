@@ -125,7 +125,7 @@ window.PRODUCTS=[{"id": "2974", "name": "سليبر بابلز إيفا يوني
 (function(){
 const C=window.CONFIG,P=window.PRODUCTS;
 const $=s=>document.querySelector(s);
-const price=p=>p.base+(p.markup==null?C.MARKUP:p.markup);
+const mk=p=>(p.markup==null?C.MARKUP:p.markup); const curBase=p=>{const x=LIVE&&LIVE["price|"+p.id];return x>0?Number(x):p.base}; const price=p=>curBase(p)+mk(p); const pHTML=p=>curBase(p)<p.base?`<s style="opacity:.55;font-weight:400;margin-inline-end:6px">${fmt(p.base+mk(p))}</s>${fmt(price(p))} <span style="background:#e11d48;color:#fff;border-radius:6px;padding:1px 6px;font-size:.7em">خصم</span>`:fmt(price(p));
 const AR=window.AREAS;
 const IM=p=>(window.IMGS||{})[p.id]||"";
 let LIVE=null;
@@ -137,10 +137,10 @@ const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}
 const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";
 function cats(){const cs=["الكل",...new Set(P.map(p=>p.cat))];$("#cats").innerHTML=cs.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}<\/button>`).join("");}
-function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${fmt(price(p))}<\/div>${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
+function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
 function grid(){const cs=cat==="الكل"?[...new Set(P.map(p=>p.cat))]:[cat];$("#grid").innerHTML=cs.map(c=>`<h3 class="csec" id="cat-${c}">${c}<\/h3><div class="pgrid">${P.filter(p=>p.cat===c).map(card).join("")}<\/div>`).join("")}
 function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
-$("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img src="${IM(p)}" alt="${p.name}"><h2>${p.name}<\/h2><div class="pr">${fmt(price(p))}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");
+$("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img src="${IM(p)}" alt="${p.name}"><h2>${p.name}<\/h2><div class="pr">${pHTML(p)}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");
 const sels=[...document.querySelectorAll("#pm select")];
 function fill(i){const prefix=sels.slice(0,i).map(s=>s.value);const vals=[...new Set(vars(p).filter(v=>prefix.every((x,j)=>v[0][j]===x)).map(v=>v[0][i]))];const cur=sels[i].value;sels[i].innerHTML=vals.map(x=>`<option value="${x}" ${x===cur?"selected":""}>${x==="default"?"عادي":x==="One size"?"مقاس واحد":x.replace(/^\./,"")}<\/option>`).join("");if(i+1<sels.length)fill(i+1);}
 sels.forEach((s,i)=>s.onchange=()=>{if(i+1<sels.length)fill(i+1)});fill(0);
@@ -159,7 +159,7 @@ if(!/^01[0125][0-9]{8}$/.test(phone)){$("#msg").textContent="رقم الموبا
 if(!cart.length||!f.gov.value||!f.area.value){$("#msg").textContent="اختار المحافظة والمنطقة.";return}
 await loadStock();for(const i of cart){const p=P.find(x=>x.id===i.id);const vr=vars(p).find(v=>p.optnames.every((n,j)=>v[0][j]===i.opts[n]));if(!vr||vr[1]<i.q){$("#msg").textContent="للأسف \""+p.name+"\" ("+Object.values(i.opts).map(v=>v==="default"?"عادي":v==="One size"?"مقاس واحد":v).join(" - ")+") مبقاش متاح بالكمية دي. شيله من السلة أو غيّر الاختيار.";return}}
 const id="E"+Date.now().toString(36).toUpperCase();
-const order={orderId:id,time:new Date().toISOString(),name:f.name.value.trim(),phone,governorate:f.gov.value,area:f.area.value,address:f.address.value.trim(),notes:f.notes.value.trim(),items:cart.map(i=>{const p=P.find(x=>x.id===i.id);return{productId:p.id,name:p.name,options:i.opts,qty:i.q,unitPrice:price(p),angaznyPrice:p.base}}),total:total(),payment:"الدفع عند الاستلام"};
+const order={orderId:id,time:new Date().toISOString(),name:f.name.value.trim(),phone,governorate:f.gov.value,area:f.area.value,address:f.address.value.trim(),notes:f.notes.value.trim(),items:cart.map(i=>{const p=P.find(x=>x.id===i.id);return{productId:p.id,name:p.name,options:i.opts,qty:i.q,unitPrice:price(p),angaznyPrice:curBase(p)}}),total:total(),payment:"الدفع عند الاستلام"};
 const btn=$("#send");btn.disabled=true;btn.textContent="جاري الإرسال...";
 try{if(!C.ORDERS_URL)throw new Error("no url");await fetch(C.ORDERS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)});
 cart=[];save();renderCart();$("#checkout").classList.remove("open");$("#done").innerHTML=`<div class="mbox"><h2>تم استلام طلبك ✔<\/h2><p>رقم الطلب: <b>${id}<\/b><\/p><p>هنتواصل معاك على ${phone} لتأكيد الطلب، والدفع عند الاستلام. لو محتاج أي حاجة كلمنا على <a href="${C.MESSENGER}">ماسنجر<\/a>.<\/p><button class="btn" data-close>تمام<\/button><\/div>`;$("#done").classList.add("open");f.reset();
