@@ -39,7 +39,9 @@ nav{display:flex;gap:20px;font-size:15px;color:var(--txt);align-items:center;fon
 .catbar button.on{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1206;border-color:transparent}
 .catbar button.doc{border-color:var(--gold);color:var(--gold2)}
 body.sect #top>.hero,body.sect #why,body.sect #docs,body.sect #policy{display:none}
-body.sect #cats{display:none}
+#cats{display:none}
+body:not(.sect) .catbar{display:none}
+body:not(.sect) #products>.wrap>h2{display:none}
 #subcats,#subcats2{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none}
 #subcats::-webkit-scrollbar,#subcats2::-webkit-scrollbar{display:none}
 #subcats .chip,#subcats2 .chip{flex:0 0 auto;white-space:nowrap}
@@ -235,11 +237,7 @@ const cnt=c=>{if(IDX){const e=IDX.cats.find(x=>x.n===c);if(e&&e.c!=null)return e
 const rep=c=>{const e=IDX&&IDX.cats.find(x=>x.n===c);if(e&&e.img)return e.img;const p=PV().find(p=>PC(p,c)&&IM(p));return p?IM(p):""};
 const names=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];
 const virt=["رمضان","رأس السنة"];
-let h='<div class="banners">'+virt.filter(v=>names.includes(v)&&cnt(v)>0).map((v,i)=>`<div class="banner b${i+1}" data-c="${v}"><b>${v==="رمضان"?"🌙 ":"🎄 "}${v}<\/b><span>${cnt(v)} منتج · اضغط للتسوق<\/span><\/div>`).join("")+'<\/div>';
-const fresh=(IDX&&IDX.latest&&IDX.latest.length)?IDX.latest:PV().slice(-20);
-h+=`<h3 class="wtitle">وصل حديثاً<\/h3><div class="hrow">${fresh.map(card).join("")}<\/div>`;
-const offs=PV().filter(p=>curBase(p)<p.base).slice(0,20);
-if(offs.length)h+=`<h3 class="wtitle">عروض وتخفيضات<\/h3><div class="hrow">${offs.map(card).join("")}<\/div>`;
+let h='';
 h+='<h3 class="wtitle">كل الأقسام<\/h3><div class="wtiles">'+names.filter(c=>!virt.includes(c)&&cnt(c)>0).map(c=>{const r=rep(c);return `<div class="wtile" data-c="${c}">${r?`<img src="${r}" alt="${c}" loading="lazy" decoding="async">`:""}<div>${c}<small>${cnt(c)} منتج<\/small><\/div><\/div>`}).join("")+'<\/div>';
 $("#grid").innerHTML=h}
 const CHUNK=48;let MORE={sections:[],si:0,ci:0,io:null};
