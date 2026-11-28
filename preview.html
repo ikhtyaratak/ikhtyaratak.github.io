@@ -188,7 +188,7 @@ body.light .banner:hover{box-shadow:0 18px 40px rgba(30,40,60,.25)}
 <div class="modal" id="pm"></div><div class="modal" id="done"></div>
 <div class="modal" id="cart"><div class="mbox"><button class="x" data-close>×</button><h2>سلة المشتريات</h2><div id="items"></div><div class="tot"><span>الإجمالي</span><span id="tot"></span></div><button class="btn" id="co" style="width:100%">إتمام الطلب</button></div></div>
 <div class="modal" id="checkout"><div class="mbox"><button class="x" data-close>×</button><h2>بيانات التوصيل</h2><div class="pol" style="margin-bottom:12px">• الدفع كاش عند الاستلام، ومفيش أي دفع مقدم.<br>• التوصيل عادةً من 2 لـ 5 أيام عمل حسب المحافظة، والشحن بيتم عن طريق موردينا المعتمدين مباشرة.<br>• مصاريف الشحن بتتحدد حسب المحافظة وبنأكدها معاك تليفونياً قبل تنفيذ الطلب.<br>• بعض منتجاتنا مستوردة وبتتشحن من مخازن المورد.<br>• الاستبدال والاسترجاع متاحين لو المنتج وصل معيب أو غلط؛ مفيش استرجاع لتغيير الرأي في المنتجات اللي سياسة المورد مبتسمحش فيها، وهنوضحلك ده عند التأكيد.</div><p id="sum" style="margin-bottom:10px"></p>
-<form id="orderform" class="fgrid"><label>الاسم بالكامل<input name="name" required></label><label>رقم الموبايل<input name="phone" inputmode="tel" required placeholder="01xxxxxxxxx"></label><label>المحافظة<select id="gov" name="gov" required></select></label><label>المنطقة<select id="area" name="area" required></select></label><label>العنوان بالتفصيل<input name="address" required></label><label>ملاحظات للشحن (اختياري)<textarea name="notes" rows="2"></textarea></label><label>عرفتنا منين؟ (اختياري)<select name="source"><option value="">اختار...</option><option>جروب فيسبوك</option><option>تيك توك</option><option>صديق</option><option>أخرى</option></select></label><button class="btn" id="send" type="submit">تأكيد الطلب</button><div id="msg"></div></form></div></div>
+<form id="orderform" class="fgrid"><label>الاسم بالكامل<input name="name" required></label><label>رقم الموبايل<input name="phone" inputmode="tel" required placeholder="01xxxxxxxxx"></label><label>المحافظة<select id="gov" name="gov" required></select></label><label>المنطقة<select id="area" name="area" required></select></label><label>العنوان بالتفصيل<input name="address" required></label><label>ملاحظات للشحن (اختياري)<textarea name="notes" rows="2"></textarea></label><label>عرفتنا منين؟ (اختياري)<select name="source"><option value="">اختار...</option><option>جروب فيسبوك</option><option>تيك توك</option><option>صديق</option><option>أخرى</option></select></label><label>كود خصم؟ (اختياري)<div style="display:flex;gap:8px"><input name="code" placeholder="مثال: AHMED50" style="flex:1"><button class="btn" type="button" id="applycode" style="padding:8px 14px">تطبيق</button></div></label><button class="btn" id="send" type="submit">تأكيد الطلب</button><div id="msg"></div></form></div></div>
 <script>// الإعدادات
 window.CONFIG={
   MARKUP:30,            // زيادة السعر على كل قطعة بالجنيه (سعر أنجزني + الزيادة = سعر العميل)
@@ -291,12 +291,29 @@ $("#items").innerHTML=cart.length?cart.map((i,n)=>{const p=P.find(x=>x.id===i.id
 $("#tot").textContent=fmt(total());$("#co").disabled=!cart.length;}
 function form(){const g=$("#gov");g.innerHTML="<option value=''>اختار المحافظة<\/option>"+Object.keys(AR).map(x=>`<option>${x}<\/option>`).join("");
 g.onchange=()=>{$("#area").innerHTML="<option value=''>اختار المنطقة<\/option>"+(AR[g.value]||[]).map(x=>`<option>${x}<\/option>`).join("")};g.onchange();}
+let appliedCode="",appliedDiscount=0;
+async function applyCode(){
+  const f=$("#orderform");const code=f.code.value.trim();const phone=f.phone.value.replace(/\s/g,"");
+  if(!code){appliedCode="";appliedDiscount=0;$("#msg").textContent="";return}
+  if(!/^01[0125][0-9]{8}$/.test(phone)){$("#msg").textContent="اكتب رقم الموبايل الأول وبعدين طبّق الكود.";return}
+  $("#msg").textContent="بنراجع الكود...";
+  try{
+    const r=await fetch(C.ORDERS_URL+"?action=validate&code="+encodeURIComponent(code)+"&phone="+encodeURIComponent(phone));
+    const v=await r.json();
+    if(v.ok){
+      appliedCode=code.toUpperCase();appliedDiscount=v.discount;
+      $("#msg").textContent="تم تطبيق الكود ✔ خصم "+v.discount+" جنيه";
+      const t=Math.max(0,total()-appliedDiscount);
+      $("#sum").textContent="إجمالي الطلب: "+fmt(total())+" - خصم "+fmt(appliedDiscount).replace(" "+C.CURRENCY,"")+" = "+fmt(t)+" (الدفع عند الاستلام)";
+    }else{appliedCode="";appliedDiscount=0;$("#msg").textContent=v.reason}
+  }catch(e){$("#msg").textContent="مقدرناش نراجع الكود دلوقتي. جرّب تاني."}
+}
 async function submit(e){e.preventDefault();const f=e.target;const phone=f.phone.value.replace(/\s/g,"");
 if(!/^01[0125][0-9]{8}$/.test(phone)){$("#msg").textContent="رقم الموبايل لازم يبقى 11 رقم ويبدأ بـ 01.";return}
 if(!cart.length||!f.gov.value||!f.area.value){$("#msg").textContent="اختار المحافظة والمنطقة.";return}
 await loadStock();for(const i of cart){const p=P.find(x=>x.id===i.id);const vr=vars(p).find(v=>p.optnames.every((n,j)=>v[0][j]===i.opts[n]));if(!vr||vr[1]<i.q){$("#msg").textContent="للأسف \""+p.name+"\" ("+Object.values(i.opts).map(v=>v==="default"?"عادي":v==="One size"?"مقاس واحد":v).join(" - ")+") مبقاش متاح بالكمية دي. شيله من السلة أو غيّر الاختيار.";return}}
 const base="E"+Date.now().toString(36).toUpperCase();const sup=i=>P.find(x=>x.id===i.id).supplier||"Angazny";const groups=[...new Set(cart.map(sup))];
-const orders=groups.map((g,k)=>{const its=cart.filter(i=>sup(i)===g);return{orderId:groups.length>1?base+"-"+(k+1):base,supplier:g,time:new Date().toISOString(),name:f.name.value.trim(),phone,governorate:f.gov.value,area:f.area.value,address:f.address.value.trim(),notes:f.notes.value.trim(),source:f.source?f.source.value:"",items:its.map(i=>{const p=P.find(x=>x.id===i.id);return{productId:p.sid||p.id,supplier:g,name:p.name,options:i.opts,qty:i.q,unitPrice:price(p),angaznyPrice:curBase(p)}}),total:its.reduce((t,i)=>t+price(P.find(p=>p.id===i.id))*i.q,0),payment:"الدفع عند الاستلام"}});const id=orders.map(o=>o.orderId).join(" + ");
+const orders=groups.map((g,k)=>{const its=cart.filter(i=>sup(i)===g);return{orderId:groups.length>1?base+"-"+(k+1):base,supplier:g,time:new Date().toISOString(),name:f.name.value.trim(),phone,governorate:f.gov.value,area:f.area.value,address:f.address.value.trim(),notes:f.notes.value.trim(),source:f.source?f.source.value:"",items:its.map(i=>{const p=P.find(x=>x.id===i.id);return{productId:p.sid||p.id,supplier:g,name:p.name,options:i.opts,qty:i.q,unitPrice:price(p),angaznyPrice:curBase(p)}}),total:Math.max(0,its.reduce((t,i)=>t+price(P.find(p=>p.id===i.id))*i.q,0)-(k===0?appliedDiscount:0)),payment:"الدفع عند الاستلام",code:k===0?appliedCode:"",discount:k===0?appliedDiscount:0}});const id=orders.map(o=>o.orderId).join(" + ");
 const btn=$("#send");btn.disabled=true;btn.textContent="جاري الإرسال...";
 try{if(!C.ORDERS_URL)throw new Error("no url");for(const order of orders){await fetch(C.ORDERS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)})}
 cart=[];save();renderCart();$("#checkout").classList.remove("open");$("#done").innerHTML=`<div class="mbox"><h2>تم استلام طلبك ✔<\/h2><p>رقم الطلب: <b>${id}<\/b><\/p><p>هنتواصل معاك على ${phone} لتأكيد الطلب، والدفع عند الاستلام. لو محتاج أي حاجة كلمنا على <a href="${C.MESSENGER}">ماسنجر<\/a>.<\/p><button class="btn" data-close>تمام<\/button><\/div>`;$("#done").classList.add("open");f.reset();
@@ -343,6 +360,7 @@ if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
 if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
 if(t.id==="cartbtn")$("#cart").classList.toggle("open");
+if(t.id==="applycode"){applyCode();return}
 if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إجمالي الطلب: "+fmt(total())+" (الدفع عند الاستلام)";$("#checkout").classList.add("open")}});
 $("#orderform").addEventListener("submit",submit);
 form();boot();
