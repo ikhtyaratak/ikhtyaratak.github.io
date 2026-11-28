@@ -93,7 +93,7 @@ h2{font-size:clamp(24px,4vw,32px);color:var(--txt);margin-bottom:24px;text-align
 .banner::after{content:"";position:absolute;inset:auto -30% -60% auto;width:70%;height:120%;background:radial-gradient(closest-side,rgba(255,255,255,.14),transparent);pointer-events:none}
 .wtitle{font-size:21px;color:var(--txt);margin:30px 0 14px;font-weight:900;border-right:5px solid var(--gold);padding-right:12px}
 .wtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:14px}
-.wtile{background:var(--surf);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;text-align:center;transition:transform .18s,box-shadow .18s,border-color .18s}
+.wtile{display:block;text-decoration:none;color:inherit;background:var(--surf);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;text-align:center;transition:transform .18s,box-shadow .18s,border-color .18s}
 .wtile:hover{transform:translateY(-3px);border-color:rgba(217,168,78,.5);box-shadow:0 12px 28px rgba(0,0,0,.4)}
 .wtile img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#fff}
 .wtile div{padding:9px 6px;font-size:13.5px;font-weight:700;color:var(--txt)}
@@ -220,7 +220,7 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="e4f74368";
+const DV="f1a2c390";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 function loadSection(c){const fs=(c.f?[c.f]:[]).concat(c.fs||[]);return Promise.all(fs.map(loadCat))}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
@@ -238,7 +238,7 @@ const rep=c=>{const e=IDX&&IDX.cats.find(x=>x.n===c);if(e&&e.img)return e.img;co
 const names=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];
 const virt=["رمضان","رأس السنة"];
 let h='';
-h+='<h3 class="wtitle">كل الأقسام<\/h3><div class="wtiles">'+names.filter(c=>!virt.includes(c)&&cnt(c)>0).map(c=>{const r=rep(c);return `<div class="wtile" data-c="${c}">${r?`<img src="${r}" alt="${c}" loading="lazy" decoding="async">`:""}<div>${c}<small>${cnt(c)} منتج<\/small><\/div><\/div>`}).join("")+'<\/div>';
+h+='<h3 class="wtitle">كل الأقسام<\/h3><div class="wtiles">'+names.filter(c=>!virt.includes(c)&&cnt(c)>0).map(c=>{const r=rep(c);return `<a class="wtile" href="?c=${encodeURIComponent(c)}" data-c="${c}">${r?`<img src="${r}" alt="${c}" loading="lazy" decoding="async">`:""}<div>${c}<small>${cnt(c)} منتج<\/small><\/div><\/a>`}).join("")+'<\/div>';
 $("#grid").innerHTML=h}
 const CHUNK=48;let MORE={sections:[],si:0,ci:0,io:null};
 function appendChunk(){const g=$("#grid");const sent=$("#more");if(sent)sent.remove();let n=CHUNK;
@@ -320,15 +320,16 @@ function boot(){
 }
 function setURL(){try{const u=new URL(location.href);if(cat===""){u.searchParams.delete("c")}else{u.searchParams.set("c",cat)}history.pushState({c:cat},"",u)}catch(e){}}
 window.addEventListener("popstate",()=>{const c=new URLSearchParams(location.search).get("c")||"";cat=c;sub="الكل";sub3="الكل";if(IDX){const ce=IDX.cats.find(x=>x.n===cat);if(ce)loadCat(ce.f).then(()=>{cats();grid()})}cats();grid()});
-document.addEventListener("click",e=>{const t=e.target;
-if(t.dataset&&t.dataset.home){cat="";sub="الكل";sub3="الكل";setURL();cats();grid();return}
+document.addEventListener("click",e=>{let t=e.target;
+if(t&&t.closest){const g=t.closest("[data-home],[data-c],[data-s],[data-l],[data-sort],[data-pr],[data-id],[data-rm],#cartbtn,#themebtn,#docsbtn,[data-close]");if(g)t=g}
+if(t.dataset&&t.dataset.home){e.preventDefault();cat="";sub="الكل";sub3="الكل";setURL();cats();grid();return}
 if(t.dataset&&t.dataset.l){sub3=t.dataset.l;cats();grid();return}
 if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll("#psort .chip").forEach(b=>b.classList.toggle("on",b.dataset.sort===sortMode));grid();return}
 if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
 if(t.dataset&&t.dataset.s){sub=t.dataset.s;sub3="الكل";cats();grid();return}
-if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}return}
+if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){e.preventDefault();cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}return}
 if(t.id==="docsbtn"){cat="ركن الدكاترة (شباشب وكلوج طبي)";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}return}
-if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadSection(c).then(()=>{cats();grid()})}}
+if(t.dataset.c){e.preventDefault();cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadSection(c).then(()=>{cats();grid()})}}
 if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
 if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
