@@ -220,7 +220,7 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="";let grp="";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="pa1795862423";;
+const DV="mg1";;
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 function loadSection(c){const fs=(c.f?[c.f]:[]).concat(c.fs||[]);return Promise.all(fs.map(loadCat))}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
@@ -347,7 +347,7 @@ if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إج�
 $("#orderform").addEventListener("submit",submit);
 form();boot();
 try{const c0=new URLSearchParams(location.search).get("c");if(c0)cat=c0;const g0=new URLSearchParams(location.search).get("g");if(g0)grp=g0}catch(e){}
-async function deep(){const m=location.hash.match(/^#p([A-Za-z]?\d+)$/);if(!m)return;const id=m[1];if(await ensure(id)){const q=P.find(x=>x.id===id||x.sid===id);if(q)openProduct(q.id)}}
+async function deep(){const m=location.hash.match(/^#p([A-Za-z]?\d+)$/);if(!m)return;const id=m[1];if(await ensure(id)){const q=P.find(x=>x.id===id||x.sid===id||(x.aka&&x.aka.includes(id)));if(q)openProduct(q.id)}}
 window.addEventListener("hashchange",deep);
 document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
 })();
