@@ -209,17 +209,17 @@ async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;await Promise.
 const Q=()=>{const e=document.getElementById("q");return e?e.value.trim():""};
 function match(p,q){return !q||p.name.indexOf(q)>-1||((window.DESC&&DESC[p.id])||"").indexOf(q)>-1}
 const PC=(p,c)=>p.cat===c||(p.xcats||[]).some(x=>x.c===c);const PS=(p,c,x)=>p.cat===c?(p.sub||"")===x:((p.xcats||[]).find(y=>y.c===c)||{}).s===x;const PSN=(p,c)=>p.cat===c?(p.sub||""):(((p.xcats||[]).find(y=>y.c===c)||{}).s||"");const PK=(p,c,k)=>p.cat===c?(p.sub3||"")===k:(((p.xcats||[]).find(y=>y.c===c)||{}).k||"")===k;
-function cats(){const cnt=c=>PV().filter(p=>liveStock(p)>0&&(c==="الكل"||PC(p,c))).length;const nm=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const cs=["الكل"].concat(nm.filter(c=>cnt(c)>0||c===cat));$("#cats").innerHTML=`<button class="chip ${cat===""?"on":""}" data-home="1">🏠 الرئيسية<\/button>`+cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span class="cnt">(${cnt(c)})</span><\/button>`).join("");const t=$("#ptot");if(t)t.textContent=cnt("الكل")+" منتج معروض";
+function cats(){const cnt=c=>{if(IDX){if(c==="الكل")return IDX.cats.reduce((sm,x)=>sm+(x.c||0),0);const e=IDX.cats.find(x=>x.n===c);if(e&&e.c!=null)return e.c}return PV().filter(p=>liveStock(p)>0&&(c==="الكل"||PC(p,c))).length};const nm=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const cs=["الكل"].concat(nm.filter(c=>cnt(c)>0||c===cat));$("#cats").innerHTML=`<button class="chip ${cat===""?"on":""}" data-home="1">🏠 الرئيسية<\/button>`+cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span class="cnt">(${cnt(c)})</span><\/button>`).join("");const t=$("#ptot");if(t)t.textContent=cnt("الكل")+" منتج معروض";
 const sc=$("#subcats");if(sc){if(cat==="الكل"||cat===""){sc.innerHTML=""}else{const ce=IDX&&IDX.cats.find(x=>x.n===cat);const snames=ce&&ce.subs?ce.subs.map(s=>s.n):[...new Set(PV().filter(p=>PC(p,cat)).map(p=>PSN(p,cat)))];const scnt=s=>PV().filter(p=>liveStock(p)>0&&PS(p,cat,s)).length;const ss=["الكل"].concat(snames.filter(s=>scnt(s)>0||s===sub));sc.innerHTML=ss.map(s=>`<button class="chip sm ${s===sub?"on":""}" data-s="${s}">${s} <span class="cnt">(${s==="الكل"?cnt(cat):scnt(s)})</span><\/button>`).join("")}}
 const sc2=$("#subcats2");if(sc2){if(cat==="الكل"||cat===""||sub==="الكل"){sc2.innerHTML=""}else{const ce=IDX&&IDX.cats.find(x=>x.n===cat);const se=ce&&ce.subs&&ce.subs.find(x=>x.n===sub);const knames=se&&se.kids?se.kids.map(k=>k.n):[];const kcnt=k=>PV().filter(p=>liveStock(p)>0&&PS(p,cat,sub)&&PK(p,cat,k)).length;const allc=PV().filter(p=>liveStock(p)>0&&PS(p,cat,sub)).length;const ks=["الكل"].concat(knames.filter(k=>kcnt(k)>0||k===sub3));sc2.innerHTML=ks.length>1?ks.map(k=>`<button class="chip xs ${k===sub3?"on":""}" data-l="${k}">${k} <span class="cnt">(${k==="الكل"?allc:kcnt(k)})</span><\/button>`).join(""):""}}
  const bar=$("#catbar");if(bar)bar.innerHTML=["الكل"].concat((IDX?IDX.cats.map(c=>c.n):[]).filter(c=>cnt(c)>0||c===cat)).map(c=>`<button class="${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span style="opacity:.6">(${cnt(c)})</span><\/button>`).join("");}
 function renderHome(){const pt=$("#ptools");if(pt)pt.style.display="none";
-const cnt=c=>PV().filter(p=>liveStock(p)>0&&PC(p,c)).length;
-const rep=c=>{const p=PV().find(p=>PC(p,c)&&IM(p));return p?IM(p):""};
+const cnt=c=>{if(IDX){const e=IDX.cats.find(x=>x.n===c);if(e&&e.c!=null)return e.c}return PV().filter(p=>liveStock(p)>0&&PC(p,c)).length};
+const rep=c=>{const e=IDX&&IDX.cats.find(x=>x.n===c);if(e&&e.img)return e.img;const p=PV().find(p=>PC(p,c)&&IM(p));return p?IM(p):""};
 const names=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];
 const virt=["رمضان","رأس السنة"];
 let h='<div class="banners">'+virt.filter(v=>names.includes(v)).map((v,i)=>`<div class="banner b${i+1}" data-c="${v}"><b>${v==="رمضان"?"🌙 ":"🎄 "}${v}<\/b><span>${cnt(v)} منتج · اضغط للتسوق<\/span><\/div>`).join("")+'<\/div>';
-const fresh=PV().slice(-20);
+const fresh=(IDX&&IDX.latest&&IDX.latest.length)?IDX.latest:PV().slice(-20);
 h+=`<h3 class="wtitle">وصل حديثاً<\/h3><div class="hrow">${fresh.map(card).join("")}<\/div>`;
 const offs=PV().filter(p=>curBase(p)<p.base).slice(0,20);
 if(offs.length)h+=`<h3 class="wtitle">عروض وتخفيضات<\/h3><div class="hrow">${offs.map(card).join("")}<\/div>`;
@@ -296,8 +296,8 @@ function boot(){
     const need=[...new Set(cart.map(i=>(IDX&&IDX.map&&IDX.map[i.id])||null).filter(Boolean))];
     await Promise.all(need.map(loadCat));
     renderCart();cats();grid();
-    if(!IDX)return;
-    await Promise.all([...new Set(Object.values(IDX.map||{}))].map(loadCat));cats();grid();
+    if(cat&&IDX){const ce=IDX.cats.find(x=>x.n===cat);if(ce){await loadCat(ce.f);cats();grid()}}
+    if(cat==="الكل")loadAll();
     deep();
   })();
 }
@@ -309,9 +309,9 @@ if(t.dataset&&t.dataset.l){sub3=t.dataset.l;cats();grid();return}
 if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll("#psort .chip").forEach(b=>b.classList.toggle("on",b.dataset.sort===sortMode));grid();return}
 if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
 if(t.dataset&&t.dataset.s){sub=t.dataset.s;sub3="الكل";cats();grid();return}
-if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
 if(t.id==="docsbtn"){cat="ركن الدكاترة";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
-if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}if(t.closest&&(t.closest(".wtile")||t.closest(".banner")))document.getElementById("products").scrollIntoView({behavior:"smooth"})}
+if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}if(t.closest&&(t.closest(".wtile")||t.closest(".banner")))document.getElementById("products").scrollIntoView({behavior:"smooth"})}
 if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
 if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
