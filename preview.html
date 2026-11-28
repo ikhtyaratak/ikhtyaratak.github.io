@@ -235,7 +235,7 @@ const cnt=c=>{if(IDX){const e=IDX.cats.find(x=>x.n===c);if(e&&e.c!=null)return e
 const rep=c=>{const e=IDX&&IDX.cats.find(x=>x.n===c);if(e&&e.img)return e.img;const p=PV().find(p=>PC(p,c)&&IM(p));return p?IM(p):""};
 const names=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];
 const virt=["رمضان","رأس السنة"];
-let h='<div class="banners">'+virt.filter(v=>names.includes(v)).map((v,i)=>`<div class="banner b${i+1}" data-c="${v}"><b>${v==="رمضان"?"🌙 ":"🎄 "}${v}<\/b><span>${cnt(v)} منتج · اضغط للتسوق<\/span><\/div>`).join("")+'<\/div>';
+let h='<div class="banners">'+virt.filter(v=>names.includes(v)&&cnt(v)>0).map((v,i)=>`<div class="banner b${i+1}" data-c="${v}"><b>${v==="رمضان"?"🌙 ":"🎄 "}${v}<\/b><span>${cnt(v)} منتج · اضغط للتسوق<\/span><\/div>`).join("")+'<\/div>';
 const fresh=(IDX&&IDX.latest&&IDX.latest.length)?IDX.latest:PV().slice(-20);
 h+=`<h3 class="wtitle">وصل حديثاً<\/h3><div class="hrow">${fresh.map(card).join("")}<\/div>`;
 const offs=PV().filter(p=>curBase(p)<p.base).slice(0,20);
