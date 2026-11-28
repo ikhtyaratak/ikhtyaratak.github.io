@@ -301,15 +301,17 @@ function boot(){
     deep();
   })();
 }
+function setURL(){try{const u=new URL(location.href);if(cat===""){u.searchParams.delete("c")}else{u.searchParams.set("c",cat)}history.pushState({c:cat},"",u)}catch(e){}}
+window.addEventListener("popstate",()=>{const c=new URLSearchParams(location.search).get("c")||"";cat=c;sub="الكل";sub3="الكل";if(IDX){const ce=IDX.cats.find(x=>x.n===cat);if(ce)loadCat(ce.f).then(()=>{cats();grid()})}cats();grid()});
 document.addEventListener("click",e=>{const t=e.target;
-if(t.dataset&&t.dataset.home){cat="";sub="الكل";sub3="الكل";cats();grid();return}
+if(t.dataset&&t.dataset.home){cat="";sub="الكل";sub3="الكل";setURL();cats();grid();return}
 if(t.dataset&&t.dataset.l){sub3=t.dataset.l;cats();grid();return}
 if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll("#psort .chip").forEach(b=>b.classList.toggle("on",b.dataset.sort===sortMode));grid();return}
 if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
 if(t.dataset&&t.dataset.s){sub=t.dataset.s;sub3="الكل";cats();grid();return}
-if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
 if(t.id==="docsbtn"){cat="ركن الدكاترة";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
-if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}}
+if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}if(t.closest&&(t.closest(".wtile")||t.closest(".banner")))document.getElementById("products").scrollIntoView({behavior:"smooth"})}
 if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
 if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
@@ -317,6 +319,7 @@ if(t.id==="cartbtn")$("#cart").classList.toggle("open");
 if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إجمالي الطلب: "+fmt(total())+" (الدفع عند الاستلام)";$("#checkout").classList.add("open")}});
 $("#orderform").addEventListener("submit",submit);
 form();boot();
+try{const c0=new URLSearchParams(location.search).get("c");if(c0)cat=c0}catch(e){}
 async function deep(){const m=location.hash.match(/^#p([A-Za-z]?\d+)$/);if(!m)return;const id=m[1];if(await ensure(id)){const q=P.find(x=>x.id===id||x.sid===id);if(q)openProduct(q.id)}}
 window.addEventListener("hashchange",deep);
 document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
