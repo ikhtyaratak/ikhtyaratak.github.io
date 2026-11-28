@@ -292,7 +292,7 @@ cart=[];save();renderCart();$("#checkout").classList.remove("open");$("#done").i
 }catch(err){$("#msg").innerHTML="مقدرناش نسجل الطلب دلوقتي. جرّب تاني أو كلمنا على <a href='"+C.MESSENGER+"'>ماسنجر<\/a>."}
 btn.disabled=false;btn.textContent="تأكيد الطلب";}
 
-try{if(localStorage.getItem("ik8theme")==="light"){document.body.classList.add("light");document.addEventListener("DOMContentLoaded",()=>{const b=document.getElementById("themebtn");if(b)b.textContent="🌙"})}}catch(e){}
+try{if(localStorage.getItem("ik8theme")==="light"){document.body.classList.add("light");const b=document.getElementById("themebtn");if(b)b.textContent="🌙"}}catch(e){}
 function boot(){
   const host=document.getElementById("cats");
   if(host&&!document.getElementById("q")){
