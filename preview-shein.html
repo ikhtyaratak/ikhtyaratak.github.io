@@ -179,6 +179,22 @@ body.pv .qbar{border-radius:2px;box-shadow:none}
 body.pv.sect .fbar{display:flex}
 .fbar span{flex:0 0 auto;border:1px solid var(--line);padding:5px 12px;font-size:12.5px;font-weight:600;border-radius:2px;color:var(--txt);cursor:pointer}
 .fbar span.on{border-color:#222;background:#222;color:#fff}
+
+/* section strip v2: big targets, clear active, easy scroll */
+body.pv .catbar{box-shadow:0 1px 0 var(--line)}
+body.pv .catbar .wrap{padding:0 6px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-padding:0 40px}
+body.pv .catbar .wrap::-webkit-scrollbar{display:none}
+body.pv .catbar button{min-height:50px;padding:0 16px;font-size:15px;font-weight:700;scroll-snap-align:center;position:relative;white-space:nowrap;border-bottom:0;color:var(--mut)}
+body.pv .catbar button::after{content:"";position:absolute;inset:auto 12px 0 12px;height:4px;border-radius:4px 4px 0 0;background:transparent}
+body.pv .catbar button.on{color:var(--txt);font-weight:900;background:rgba(229,72,77,.08)}
+body.pv .catbar button.on::after{background:var(--gold)}
+body.pv .catbar button.doc{color:var(--gold)}
+body.pv .catbar::before,body.pv .catbar::after{content:"";position:absolute;top:0;bottom:0;width:26px;z-index:2;pointer-events:none}
+body.pv .catbar::before{left:0;background:linear-gradient(90deg,var(--ink),transparent)}
+body.pv .catbar::after{right:0;background:linear-gradient(270deg,var(--ink),transparent)}
+body.pv.light .catbar::before{background:linear-gradient(90deg,#fff,transparent)}
+body.pv.light .catbar::after{background:linear-gradient(270deg,#fff,transparent)}
+body.pv .catbar button b{font-weight:600;font-size:12px;color:var(--mut);margin-inline-start:4px}
 </style>
 
 
@@ -389,4 +405,4 @@ window.addEventListener("hashchange",deep);
 document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
 })();
 document.body.insertAdjacentHTML("beforeend",'<div id="lb"><b>×<\/b><img alt=""><\/div>');document.addEventListener("click",e=>{const lb=document.getElementById("lb");if(e.target.id==="mimg"){lb.querySelector("img").src=e.target.src;lb.classList.add("open");return}if(lb.classList.contains("open")){lb.classList.remove("open")}});
-</script></body></html>
+</script><script>(function(){const f=()=>{const b=document.querySelector(".catbar button.on");if(b&&b.scrollIntoView)b.scrollIntoView({inline:"center",block:"nearest"})};const cb=document.querySelector(".catbar");if(cb)new MutationObserver(()=>setTimeout(f,30)).observe(cb,{childList:true,subtree:true,attributes:true,attributeFilter:["class"]})})()</script></body></html>
