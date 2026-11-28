@@ -171,6 +171,7 @@ const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
 const DV="e4f74368";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
+function loadSection(c){const fs=(c.f?[c.f]:[]).concat(c.fs||[]);return Promise.all(fs.map(loadCat))}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
 async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;await Promise.all([...new Set(Object.values(IDX.map||{}))].map(loadCat));cats();grid()}
 const Q=()=>{const e=document.getElementById("q");return e?e.value.trim():""};
@@ -261,9 +262,9 @@ if(t.dataset&&t.dataset.l){sub3=t.dataset.l;cats();grid();return}
 if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll("#psort .chip").forEach(b=>b.classList.toggle("on",b.dataset.sort===sortMode));grid();return}
 if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
 if(t.dataset&&t.dataset.s){sub=t.dataset.s;sub3="الكل";cats();grid();return}
-if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
-if(t.id==="docsbtn"){cat="ركن الدكاترة (شباشب وكلوج طبي)";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
-if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}}
+if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.id==="docsbtn"){cat="ركن الدكاترة (شباشب وكلوج طبي)";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadSection(c).then(()=>{cats();grid()})}}
 if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
 if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
