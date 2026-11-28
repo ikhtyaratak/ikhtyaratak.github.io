@@ -63,7 +63,7 @@ footer{padding:32px 0;text-align:center;color:#6b7280;font-size:14px}
 .chip.on{background:var(--navy);color:#fff}
 .pgrid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 .insp{display:inline-block;background:#eef7ee;color:#1c6b3a;border:1px solid #bfe0c8;border-radius:6px;font-size:12px;padding:2px 8px;margin-top:6px}
-.pcard{background:#fff;border:1px solid #eadfce;border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.pcard{background:#fff;border:1px solid #eadfce;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;content-visibility:auto;contain-intrinsic-size:auto 260px}
 .pcard img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#fff;background:#f3ede2}
 .pb{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
 .pb h3{font-size:16px;color:var(--navy)}
@@ -169,10 +169,10 @@ const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
 let cat="الكل";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="2b54174b";
+const DV="9be1f971";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
-async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;for(const f of new Set(Object.values(IDX.map||{}))){await loadCat(f)}cats();grid()}
+async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;await Promise.all([...new Set(Object.values(IDX.map||{}))].map(loadCat));cats();grid()}
 const Q=()=>{const e=document.getElementById("q");return e?e.value.trim():""};
 function match(p,q){return !q||p.name.indexOf(q)>-1||((window.DESC&&DESC[p.id])||"").indexOf(q)>-1}
 const PC=(p,c)=>p.cat===c||(p.xcats||[]).some(x=>x.c===c);const PS=(p,c,x)=>p.cat===c?(p.sub||"")===x:((p.xcats||[]).find(y=>y.c===c)||{}).s===x;const PSN=(p,c)=>p.cat===c?(p.sub||""):(((p.xcats||[]).find(y=>y.c===c)||{}).s||"");const PK=(p,c,k)=>p.cat===c?(p.sub3||"")===k:(((p.xcats||[]).find(y=>y.c===c)||{}).k||"")===k;
@@ -233,10 +233,10 @@ function boot(){
   (async()=>{
     try{const r=await fetch("data/cats.json",{cache:"no-store"});IDX=await r.json()}catch(e){IDX=null}
     const need=[...new Set(cart.map(i=>(IDX&&IDX.map&&IDX.map[i.id])||null).filter(Boolean))];
-    for(const f of need){await loadCat(f)}
+    await Promise.all(need.map(loadCat));
     renderCart();cats();grid();
     if(!IDX)return;
-    for(const f of new Set(Object.values(IDX.map||{}))){await loadCat(f)}cats();grid();
+    await Promise.all([...new Set(Object.values(IDX.map||{}))].map(loadCat));cats();grid();
     deep();
   })();
 }
