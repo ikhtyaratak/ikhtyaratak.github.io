@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اختياراتك | كل يوم حاجة تستاهل</title>
+<meta name="description" content="اختياراتك: منتجات متنوعة بنختارها بعناية، جودة كويسة وسعر مناسب. تابعنا على فيسبوك.">
+<style>
+:root{--navy:#17263f;--accent:#e8722a;--bg:#f6f7f9;--line:#e7ebf0;--ink:#1d2733;--mut:#68788c}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:var(--navy)}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#17263f,#2f4d7d)}
+nav{display:flex;gap:20px;font-size:15px;color:var(--navy);align-items:center}
+.btn{display:inline-block;background:var(--accent);color:#fff;font-weight:700;padding:11px 26px;border-radius:999px;border:0;font:inherit;cursor:pointer}
+.btn.alt{background:transparent;color:var(--navy);border:2px solid var(--navy)}
+.btn.sm{padding:7px 14px;margin-top:auto;font-size:14px}
+.btn:disabled{opacity:.45}
+.hero{padding:46px 0 28px;text-align:center}
+.hero h1{font-size:clamp(30px,6vw,50px);color:var(--navy);line-height:1.35;font-weight:800}
+.hero h1 span{color:var(--accent)}
+.hero p{max-width:560px;margin:12px auto 22px;font-size:17px;color:var(--mut)}
+.hero .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.qbar{display:block;margin:0 auto 18px;padding:12px 22px;width:min(560px,100%);box-sizing:border-box;border:1px solid var(--line);border-radius:999px;font:inherit;background:#fff;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+.qbar:focus{outline:2px solid #c9d6e6}
+.catbar{position:sticky;top:64px;z-index:55;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.catbar .wrap{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;scrollbar-width:thin}
+.catbar button{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.catbar button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.catbar button.doc{border-color:var(--accent);color:var(--accent)}
+section{padding:36px 0}
+h2{font-size:26px;color:var(--navy);margin-bottom:22px;text-align:center}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:#fff;border-radius:18px;padding:24px;border:1px solid var(--line)}
+.card .ic{font-size:26px;font-weight:800;color:var(--accent)}
+.card h3{color:var(--navy);margin:6px 0 4px;font-size:19px}
+.card p{color:var(--mut);font-size:15px}
+.cats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.cats span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 20px;color:var(--navy);font-weight:600}
+.docsband{background:linear-gradient(135deg,#17263f,#2f4d7d);color:#fff;border-radius:22px;padding:26px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 12px 30px rgba(23,38,63,.16)}
+.docsband h2{color:#fff;margin:8px 0 8px;font-size:clamp(22px,4vw,30px)}
+.docsband p{color:#dbe4f2;margin:0;max-width:540px;font-size:16px;line-height:1.7}
+.doctag{display:inline-block;background:var(--accent);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+.docsband .btn{background:#fff;color:var(--navy);border:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
+.chip{font:inherit;border:1px solid var(--line);background:#fff;color:var(--navy);padding:7px 18px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip.sm{padding:5px 12px;font-size:13px;font-weight:500}
+.chip.xs{padding:4px 10px;font-size:12px;font-weight:500}
+.chip.doc{border-color:var(--accent);color:var(--accent);font-weight:800}
+.chip .cnt{opacity:.55;font-size:.92em;font-weight:600}
+.chips.subs{margin:-4px 14px 10px;gap:6px}
+.chips.subs2{margin:-4px 14px 10px;gap:6px}
+.ptools{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin:2px 14px 10px;align-items:center}
+.ptools .chips{margin:0;gap:6px}
+.ptot{font-size:.5em;color:var(--accent);font-weight:700;margin-inline-start:6px}
+.csec{margin:26px 0 12px;color:var(--navy);font-size:20px;border-right:5px solid var(--accent);padding-right:10px}
+.pgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;content-visibility:auto;contain-intrinsic-size:auto 260px;transition:box-shadow .15s}
+.pcard:hover{box-shadow:0 8px 22px rgba(16,24,40,.09)}
+.pcard img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#fff}
+.pb{padding:12px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pb h3{font-size:15px;color:var(--ink);line-height:1.55;font-weight:600}
+.pr{color:var(--accent);font-weight:800;font-size:18px}
+.insp{display:inline-block;background:#eef7ee;color:#1c6b3a;border:1px solid #bfe0c8;border-radius:6px;font-size:12px;padding:2px 8px;margin-top:2px}
+.cartbtn{font:inherit;background:var(--navy);color:#fff;border:0;border-radius:999px;padding:6px 16px;cursor:pointer}
+.banners{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:4px 0 6px}
+.banner{border-radius:18px;padding:22px 20px;color:#fff;cursor:pointer;min-height:104px;display:flex;flex-direction:column;justify-content:center;transition:transform .15s}
+.banner:hover{transform:translateY(-2px)}
+.banner b{font-size:22px;margin-bottom:4px}
+.banner span{opacity:.88;font-size:13.5px}
+.banner.b1{background:linear-gradient(135deg,#17263f,#2f4d7d)}
+.banner.b2{background:linear-gradient(135deg,#c75f14,#e8924a)}
+.wtitle{font-size:20px;color:var(--navy);margin:26px 0 12px;font-weight:800;border-right:5px solid var(--accent);padding-right:10px}
+.wtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.wtile{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;text-align:center;transition:transform .15s,box-shadow .15s}
+.wtile:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(16,24,40,.09)}
+.wtile img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#fff}
+.wtile div{padding:8px 6px;font-size:13.5px;font-weight:700;color:var(--navy)}
+.wtile small{display:block;color:var(--mut);font-weight:400;font-size:11.5px}
+.hrow{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px}
+.hrow .pcard{min-width:170px;max-width:170px}
+.cta{background:var(--navy);color:#fff;text-align:center;border-radius:24px;padding:44px 20px}
+.cta h2{color:#fff}
+.pol{background:#f4f7fb;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.9;color:#3d4c60}
+.policy{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:8px}
+.policy li{margin-right:18px}
+footer{padding:32px 0;text-align:center;color:var(--mut);font-size:14px}
+@media(max-width:600px){nav a:not(.btn){display:none}}
+.modal{position:fixed;inset:0;background:rgba(23,38,63,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
+.modal.open{display:flex}
+.mbox{background:#fff;border-radius:20px;max-width:440px;width:100%;max-height:92vh;overflow:auto;padding:20px;position:relative}
+.mbox>img{width:100%;max-height:340px;object-fit:contain;cursor:zoom-in;border-radius:12px;background:#f6f7f9}
+.mbox h2{color:var(--navy);margin:10px 0 4px;font-size:22px}
+.x{position:absolute;top:8px;left:12px;border:0;background:#fff;font-size:28px;cursor:pointer}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99;display:none;align-items:center;justify-content:center;padding:10px}#lb.open{display:flex}#lb img{max-width:100%;max-height:100%;object-fit:contain}#lb b{position:absolute;top:12px;left:16px;color:#fff;font-size:34px;cursor:pointer;line-height:1}
+.thumbs{display:flex;gap:6px;overflow-x:auto;padding:6px 0}.thumbs img{width:56px;height:56px;max-height:56px;object-fit:contain;border-radius:8px;border:2px solid transparent;flex:none;cursor:pointer}.thumbs img.on{border-color:var(--navy)}
+.desc{white-space:pre-line;font-size:14px;line-height:1.7;color:#333;margin:10px 0;max-height:190px;overflow:auto;background:#f6f7f9;border-radius:10px;padding:10px}
+.opts{display:grid;gap:10px;margin:14px 0}
+label{display:grid;gap:4px;font-size:14px;font-weight:600;color:var(--navy)}
+select,input,textarea{font:inherit;padding:10px;border:1px solid #d5dde8;border-radius:10px;width:100%}
+.ci{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:10px 0}
+.ci img{width:56px;height:56px;object-fit:contain;border-radius:8px}
+.ci div{flex:1;display:grid;font-size:14px}.ci small{color:var(--mut)}
+.x2{border:0;background:none;color:#b42318;cursor:pointer;font:inherit}
+.tot{display:flex;justify-content:space-between;font-weight:800;margin:14px 0;color:var(--navy)}
+.empty{text-align:center;color:var(--mut);padding:16px}
+.fgrid{display:grid;gap:10px}
+#msg{color:#b42318;font-size:14px;margin-top:8px}
+.err{color:#b3261e;font-size:14px;min-height:18px}
+</style>
+
+</head>
+<body>
+<header><div class="wrap">
+ <a class="brand" href="#top"><span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 9h14l-1.2 11H6.2L5 9Z" fill="#f08a24"/><path d="M9 9V7a3 3 0 0 1 6 0v2" stroke="#14284b" stroke-width="2" stroke-linecap="round"/></svg></span>اختياراتك</a>
+ <nav><a href="#products">المنتجات</a><a href="#policy">التوصيل والاسترجاع</a><button class="cartbtn" id="cartbtn">السلة (<span id="cc">0</span>)</button></nav>
+</div></header>
+<nav class="catbar"><div class="wrap" id="catbar"></div></nav>
+<main id="top">
+<div class="wrap hero">
+ <h1>اختياراتك<br><span>كل يوم حاجة تستاهل</span></h1>
+ <p>بنختار لك منتجات متنوعة تجمع بين الجودة والسعر المناسب. عروض ومنتجات جديدة باستمرار.</p>
+ <div class="btns"><a class="btn" href="#products">شوف المنتجات</a><a class="btn alt" data-ms href="#">كلمنا على ماسنجر</a></div>
+</div>
+<section id="why"><div class="wrap">
+ <h2>ليه اختياراتك؟</h2>
+ <div class="grid">
+  <div class="card"><div class="ic">01</div><h3>اختيار بعناية</h3><p>بنراجع كل منتج قبل ما نعرضه، علشان توصل لحاجة حلوة بجد.</p></div>
+  <div class="card"><div class="ic">02</div><h3>أسعار مناسبة</h3><p>جودة كويسة بسعر في المتناول، من غير مبالغة.</p></div>
+  <div class="card"><div class="ic">03</div><h3>جديد كل يوم</h3><p>منتجات وعروض بتتضاف باستمرار، تابعنا وماتفوتش حاجة.</p></div>
+ </div>
+</div></section>
+<section id="docs"><div class="wrap"><div class="docsband">
+<div><span class="doctag">جديد</span><h2>ركن الدكاترة</h2>
+<p>سكرابات، بالطو، سماعات وأدوات، وكل اللي الطبيب وطالب الطب محتاجه في مكان واحد — دفع عند الاستلام والتوصيل لكل المحافظات.</p></div>
+<button class="btn" id="docsbtn">اتفرج على الركن</button>
+</div></div></section>
+<section id="products"><div class="wrap"><h2>المنتجات <span class="ptot" id="ptot"></span></h2><div class="chips" id="cats"></div><div class="chips subs" id="subcats"></div><div class="chips subs2" id="subcats2"></div><div class="ptools" id="ptools"><div class="chips subs" id="psort"><button class="chip sm on" data-sort="new">الأحدث</button><button class="chip sm" data-sort="lo">الأرخص الأول</button><button class="chip sm" data-sort="hi">الأغلى الأول</button></div><div class="chips subs" id="prange"><button class="chip sm on" data-pr="">كل الأسعار</button><button class="chip sm" data-pr="0-100">أقل من ١٠٠</button><button class="chip sm" data-pr="100-250">١٠٠ - ٢٥٠</button><button class="chip sm" data-pr="250-500">٢٥٠ - ٥٠٠</button><button class="chip sm" data-pr="500-1000">٥٠٠ - ١٠٠٠</button><button class="chip sm" data-pr="1000-">أكتر من ١٠٠٠</button></div></div><div id="grid"></div></div></section>
+<section id="policy"><div class="wrap"><h2>التوصيل والاسترجاع</h2><div class="policy"><ul>
+<li><b>الدفع:</b> عند الاستلام فقط، ما فيش دفع أونلاين.</li>
+<li><b>التوصيل:</b> لكل المحافظات. مصاريف الشحن بتتحسب وبتتأكد معاك في مكالمة تأكيد الطلب قبل الشحن.</li>
+<li><b>التأكيد:</b> هنكلمك على رقمك لتأكيد الطلب والمقاس واللون قبل الشحن.</li>
+<li><b>المشاكل والاسترجاع:</b> لو فيه عيب أو غلط في الطلب كلمنا على ماسنجر وهنتصرف.</li>
+</ul></div></div></section>
+<section><div class="wrap"><div class="cta">
+ <h2>عايز تعرف أحدث العروض؟</h2>
+ <p style="margin-bottom:22px">تابع صفحتنا على فيسبوك وكلمنا في الرسائل.</p>
+ <a class="btn" data-fb href="#">صفحة اختياراتك على فيسبوك</a>
+</div></div></section>
+</main>
+<footer>© اختياراتك، كل يوم حاجة تستاهل · mahmoudjdkd8@gmail.com</footer>
+<div class="modal" id="pm"></div><div class="modal" id="done"></div>
+<div class="modal" id="cart"><div class="mbox"><button class="x" data-close>×</button><h2>سلة المشتريات</h2><div id="items"></div><div class="tot"><span>الإجمالي</span><span id="tot"></span></div><button class="btn" id="co" style="width:100%">إتمام الطلب</button></div></div>
+<div class="modal" id="checkout"><div class="mbox"><button class="x" data-close>×</button><h2>بيانات التوصيل</h2><div class="pol" style="margin-bottom:12px">• الدفع كاش عند الاستلام، ومفيش أي دفع مقدم.<br>• التوصيل عادةً من 2 لـ 5 أيام عمل حسب المحافظة، والشحن بيتم عن طريق موردينا المعتمدين مباشرة.<br>• مصاريف الشحن بتتحدد حسب المحافظة وبنأكدها معاك تليفونياً قبل تنفيذ الطلب.<br>• بعض منتجاتنا مستوردة وبتتشحن من مخازن المورد.<br>• الاستبدال والاسترجاع متاحين لو المنتج وصل معيب أو غلط؛ مفيش استرجاع لتغيير الرأي في المنتجات اللي سياسة المورد مبتسمحش فيها، وهنوضحلك ده عند التأكيد.</div><p id="sum" style="margin-bottom:10px"></p>
+<form id="orderform" class="fgrid"><label>الاسم بالكامل<input name="name" required></label><label>رقم الموبايل<input name="phone" inputmode="tel" required placeholder="01xxxxxxxxx"></label><label>المحافظة<select id="gov" name="gov" required></select></label><label>المنطقة<select id="area" name="area" required></select></label><label>العنوان بالتفصيل<input name="address" required></label><label>ملاحظات للشحن (اختياري)<textarea name="notes" rows="2"></textarea></label><button class="btn" id="send" type="submit">تأكيد الطلب</button><div id="msg"></div></form></div></div>
+<script>// الإعدادات
+window.CONFIG={
+  MARKUP:30,            // زيادة السعر على كل قطعة بالجنيه (سعر أنجزني + الزيادة = سعر العميل)
+  ORDERS_URL:"https://script.google.com/macros/s/AKfycbxl1n61s422PY0QonrI-6vgPk-2I9gvqXb1Q4WLqkcYVscqpirSIHKTF3CtlrbwS0Bh/exec",        // رابط Google Apps Script اللي بيسجل الطلبات في الشيت
+  STOCK_URL:"https://docs.google.com/spreadsheets/d/1Myj4RFolzDBxLjCNHBWxl1XYSjlmzUZ-RLF4dYZmhq8/gviz/tq?tqx=out:json&sheet=Stock",
+  MESSENGER:"https://m.me/61596099963103",
+  FB_PAGE:"https://www.facebook.com/profile.php?id=61596099963103",
+  CURRENCY:"جنيه"
+};
+
+window.AREAS={"القاهرة":["التجمع الخامس","بولاق ابو العلا","الزمالك","التجمع الاول","العتبه","شبرا","مدينه نصر","منشيه ناصر","مصر الجديده","المقطم","التجمع الثالث","الرحاب","التجمع الثانى","الموسكى","الحسين","الازهر","مصر القديمه","عابدين","الهضبه الوسطى","مدينتى","مدينه الشروق","حلوان","النزهه","المرج","عين شمس","المطريه","مدينه بدر","الوايلى","الازبكيه","وسط البلد","باب الشعريه","البساتين","الخليفة","دار السلام","المعصره","مدينه السلام","طره","15 مايو","التبين","السيده زينب","الزيتون","الزاوية الحمراء","الساحل","روض الفرج","حدائق القبه","الاميرية","الشرابية","المعادى","جاردن سيتى","رمسيس","العباسيه","كوتسيكا","الجماليه","الظاهر","مدينه المستقبل","التحرير","عين الصيره","السيد عائشه","عزبه النخل","جسر السويس","عبود","الحلمية","غمرة","القطامية","ماسبيرو","باب اللوق","المنيل","الدرب الاحمر","منطقة أخرى"],"الجيزة":["6 اكتوبر","فيصل","الهرم","الدقى","امبابه","المهندسين","المنيب","بولاق الدكرور","الشيخ زايد","الحوامدية","البدرشين","الصف","أطفيح","العياط","المريوطيه","أوسيم","كرداسة","أبو النمرس","العمرانيه","العجوزه","بين السرايات","الكيت كات","الوراق","حدائق الاهرام","المنصورية","شبرامنت","بشتيل","ميدان الجيزه","القريه الزكيه","جامعه القاهره","البحر الاعظم","ساقيه ميكي","سقاره","صفط اللبن","منطقة أخرى"],"الإسكندرية":["ابو قير","الابراهيمية","الازاريطه","الانفوشى","الحضره","الدخيله","السرايا","السيوف","الشاطبى","العجمى","العصافره","العطارين","القبارى","اللبان","المعموره","المكس","المنتزه","المندره","المنشية","الورديان","باكوس","بحرى","بولكلى","ثروت","جليم","جناكليس","الجمرك","كليوباترا","ميامى","رأس التين","رشدى","زيزينيا","سابا باشا","سان ستيفانو","سبورتنج","ستانلى","سموحه","سيدى بشر","سيدى جابر","شدس","صفر","فكتوريا","فلمنج","كامب شيزار","كرموز","كفر عبده","كوم الدكة","كونت زيزينيا","لوران","محرم بك","محطة الرمل","ابوسليمان","كارفور اسكندرية","محطه مصر","غبريال","العوايد","الموقف","العامرية","برج العرب القديمه","برج العرب الجديد","منطقة أخرى"],"السويس":["فيصل","الجناين","عتاقة","الأربعين","بورتوفيق","السويس","السويس الجديده","السلام","منطقة أخرى"],"البحيرة":["رشيد","شبراخيت","ايتاي البارود","أبو حمص","حوش عيسى","كفر الدوار","الدلنجات","كوم حمادة","دمنهور","المحمودية","البحيره","إدكو","الرحمانية","مركز بدر","ابو المطامير","منطقة أخرى"],"أسوان":["دراو","كوم أمبو","نصر النوبة","إدفو","الصالحين","المحموديه","مركز اسوان","الكرور","مركز السيل","كيما","منطقة أخرى"],"الشرقية":["أبو كبير‏","الزقازيق","فاقوس","ههيا‏","أبو حماد","الإبراهيمية","بلبيس","الحسينية","ديرب نجم","العاشر من رمضان","مشتول","منيا القمح","كفر صقر","الصالحيه","مدينة القرين","القنايات","صان الحجر","مركز اولاد صقر","منطقة أخرى"],"بورسعيد":["مدينه بورفؤاد","حى الجنوب","حى العرب","حى الشروق","حى الضواحى","حى الزهور","حى المناخ","حى غرب","مركز بورسعيد","حى شرق","منطقة أخرى"],"أسيوط":["أبو تيج","ديروط","القوصيه","أبنوب","منفلوط","الغنايم","ساحل سليم","البدارى","صدفا","الفتح","مركز اسيوط","الوريديه","اسيوط الجديده","منطقة أخرى"],"بني سويف":["إهناسيا","الفشن الجديدة","ببا","ناصر","الواسطى","مركز بنى سويف","مدينه العبور","صلاح سالم","مركز سمسطا","مركز الفشن","منطقة أخرى"],"الإسماعيلية":["التل الكبير","فايد","القنطرة شرق","القنطرة غرب","أبوصوير","القصاصين","مركز الاسماعيلية","حى الجامعه","السلام","الشيخ زايد","حى الزهور","منطقة أخرى"],"الدقهلية":["أجا","الجمالية","الستاموني","السنبلاوين","الكردي","المطرية","المنزلة","المنصورة","بلقاس","بني عبيد","تمي الأمديد","دكرنس","مركز شربين","طلخا","محلة دمنة","منية النصر","ميت سلسيل","ميت غمر","نبروه","جمصة","مركز الدقهليه","منطقة أخرى"],"الأقصر":["أرمنت","الأقصر الجديدة","إسنا","البياضية","الزينية","الطود","طيبة الجديدة","القرنة","مركز الاقصر","الكرنك","منطقة أخرى"],"سوهاج":["أخميم","جرجا","جهينة الغربية","مدينة ناصر","طما‏","طهطا","المراغة‏","المنشاة‏","ساقلتة","دار السلام","البلينا‏","جزيره شندويل","مركز سوهاج","حى الزهراء","برديس","مركز العسيرات","مركز بندار","منطقة أخرى"],"المنيا":["بني مزار‏","أبو قرقاص","دير مواس","سمالوط","مطاي","مغاغة","ملوي","العدوة‏","مطاي‏","مركز المنيا","منطقة أخرى"],"المنوفية":["أشمون","الباجور","مدينة السادات","شبين الكوم","قويسنا","منوف","الشهداء","بركة السبع‏","تلا‏","منطقة أخرى"],"الغربية":["كفر الزيات","السنطة","المحله الكبرى","بسيون","زفتى","سمنود","قطور","طنطا","مركز الغربيه","منطقة أخرى"],"الفيوم":["سنورس","إبشواي","اطسا","طامية","يوسف الصديق","مركز الفيوم","السلخانه","سنهور","المسلة","منطقة أخرى"],"دمياط":["فارسكور","كفر سعد","الزرقا","كفر البطيخ","دمياط الجديده","دمياط القديمه","راس البر","دمياط","منطقة أخرى"],"قنا":["أبو تشت‏","دشنا‏","قفط‏","قوص‏","الوقف‏","غرب قنا","فرشوط","نجع حمادي","مركز قنا","مركز نقاده","منطقة أخرى"],"كفر الشيخ":["دسوق","فوه","مطوبس","قلين","مركز سيدي سالِم","الرياض","بيلا","الحامول","مركز البرلس","كفر الشيخ","بلطيم","منطقة أخرى"],"البحر الأحمر":["الغردقه","منطقة أخرى"],"القليوبية":["بنها","قليوب","القناطر الخيرية","الخانكة","كفر شكر","شبين القناطر","طوخ","العبور","قها","ابو زعبل","الخصوص","شبرا الخيمه","مركز القليوبيه","منطقة أخرى"]}
+;
+window.DESC={};;
+window.PRODUCTS=[];;
+(function(){
+const C=window.CONFIG,P=window.PRODUCTS;
+const $=s=>document.querySelector(s);
+const mk=p=>(p.markup==null?C.MARKUP:p.markup); const curBase=p=>{const x=LIVE&&LIVE["price|"+p.id];return x>0?Number(x):p.base}; const price=p=>curBase(p)+mk(p); const pHTML=p=>curBase(p)<p.base?`<s style="opacity:.55;font-weight:400;margin-inline-end:6px">${fmt(p.base+mk(p))}</s>${fmt(price(p))} <span style="background:#e11d48;color:#fff;border-radius:6px;padding:1px 6px;font-size:.7em">خصم</span>`:fmt(price(p));
+const AR=window.AREAS;
+const IM=p=>p.img||((window.IMGS||{})[p.id]||"");
+let LIVE=null;
+const key=(p,o)=>p.id+"|"+o.join("|");
+const vars=p=>{if(!LIVE)return p.variants;const f=p.variants.map(v=>[v[0],LIVE[key(p,v[0])]||0]).filter(v=>v[1]>0);return f.length?f:p.variants.filter(v=>v[1]>0)};
+const liveStock=p=>{if(!LIVE)return p.stock||1;let s=0,hit=0;(p.variants||[]).forEach(v=>{const k=key(p,v[0]);if(k in LIVE)hit++;s+=Number(LIVE[k])||0});return hit?s:(p.stock||1)};
+async function loadStock(){try{const r=await fetch(C.STOCK_URL+"&_="+Date.now());const t=await r.text();const j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));const m={};j.table.rows.forEach(x=>{if(x.c[0]&&x.c[1]){const c=x.c[1];const v=(c.v!=null?c.v:(c.f!=null?Number(c.f):0));m[x.c[0].v]=v}});if(Object.keys(m).length){LIVE=m;window.LIVE=m;return true}}catch(e){}return false}
+let cart=[];try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
+const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
+const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
+let cat="";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
+const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
+let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
+const DV="e4f74368";
+async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
+async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
+async function loadAll(){if(ALLLOADED||!IDX)return;ALLLOADED=true;await Promise.all([...new Set(Object.values(IDX.map||{}))].map(loadCat));cats();grid()}
+const Q=()=>{const e=document.getElementById("q");return e?e.value.trim():""};
+function match(p,q){return !q||p.name.indexOf(q)>-1||((window.DESC&&DESC[p.id])||"").indexOf(q)>-1}
+const PC=(p,c)=>p.cat===c||(p.xcats||[]).some(x=>x.c===c);const PS=(p,c,x)=>p.cat===c?(p.sub||"")===x:((p.xcats||[]).find(y=>y.c===c)||{}).s===x;const PSN=(p,c)=>p.cat===c?(p.sub||""):(((p.xcats||[]).find(y=>y.c===c)||{}).s||"");const PK=(p,c,k)=>p.cat===c?(p.sub3||"")===k:(((p.xcats||[]).find(y=>y.c===c)||{}).k||"")===k;
+function cats(){const cnt=c=>PV().filter(p=>liveStock(p)>0&&(c==="الكل"||PC(p,c))).length;const nm=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const cs=["الكل"].concat(nm.filter(c=>cnt(c)>0||c===cat));$("#cats").innerHTML=`<button class="chip ${cat===""?"on":""}" data-home="1">🏠 الرئيسية<\/button>`+cs.map(c=>`<button class="chip ${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span class="cnt">(${cnt(c)})</span><\/button>`).join("");const t=$("#ptot");if(t)t.textContent=cnt("الكل")+" منتج معروض";
+const sc=$("#subcats");if(sc){if(cat==="الكل"||cat===""){sc.innerHTML=""}else{const ce=IDX&&IDX.cats.find(x=>x.n===cat);const snames=ce&&ce.subs?ce.subs.map(s=>s.n):[...new Set(PV().filter(p=>PC(p,cat)).map(p=>PSN(p,cat)))];const scnt=s=>PV().filter(p=>liveStock(p)>0&&PS(p,cat,s)).length;const ss=["الكل"].concat(snames.filter(s=>scnt(s)>0||s===sub));sc.innerHTML=ss.map(s=>`<button class="chip sm ${s===sub?"on":""}" data-s="${s}">${s} <span class="cnt">(${s==="الكل"?cnt(cat):scnt(s)})</span><\/button>`).join("")}}
+const sc2=$("#subcats2");if(sc2){if(cat==="الكل"||cat===""||sub==="الكل"){sc2.innerHTML=""}else{const ce=IDX&&IDX.cats.find(x=>x.n===cat);const se=ce&&ce.subs&&ce.subs.find(x=>x.n===sub);const knames=se&&se.kids?se.kids.map(k=>k.n):[];const kcnt=k=>PV().filter(p=>liveStock(p)>0&&PS(p,cat,sub)&&PK(p,cat,k)).length;const allc=PV().filter(p=>liveStock(p)>0&&PS(p,cat,sub)).length;const ks=["الكل"].concat(knames.filter(k=>kcnt(k)>0||k===sub3));sc2.innerHTML=ks.length>1?ks.map(k=>`<button class="chip xs ${k===sub3?"on":""}" data-l="${k}">${k} <span class="cnt">(${k==="الكل"?allc:kcnt(k)})</span><\/button>`).join(""):""}}
+ const bar=$("#catbar");if(bar)bar.innerHTML=["الكل"].concat((IDX?IDX.cats.map(c=>c.n):[]).filter(c=>cnt(c)>0||c===cat)).map(c=>`<button class="${c===cat?"on":""}${c==="ركن الدكاترة"?" doc":""}" data-c="${c}">${c} <span style="opacity:.6">(${cnt(c)})</span><\/button>`).join("");}
+function renderHome(){const pt=$("#ptools");if(pt)pt.style.display="none";
+const cnt=c=>PV().filter(p=>liveStock(p)>0&&PC(p,c)).length;
+const rep=c=>{const p=PV().find(p=>PC(p,c)&&IM(p));return p?IM(p):""};
+const names=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];
+const virt=["رمضان","رأس السنة"];
+let h='<div class="banners">'+virt.filter(v=>names.includes(v)).map((v,i)=>`<div class="banner b${i+1}" data-c="${v}"><b>${v==="رمضان"?"🌙 ":"🎄 "}${v}<\/b><span>${cnt(v)} منتج · اضغط للتسوق<\/span><\/div>`).join("")+'<\/div>';
+const fresh=PV().slice(-20);
+h+=`<h3 class="wtitle">وصل حديثاً<\/h3><div class="hrow">${fresh.map(card).join("")}<\/div>`;
+const offs=PV().filter(p=>curBase(p)<p.base).slice(0,20);
+if(offs.length)h+=`<h3 class="wtitle">عروض وتخفيضات<\/h3><div class="hrow">${offs.map(card).join("")}<\/div>`;
+h+='<h3 class="wtitle">كل الأقسام<\/h3><div class="wtiles">'+names.filter(c=>!virt.includes(c)&&cnt(c)>0).map(c=>{const r=rep(c);return `<div class="wtile" data-c="${c}">${r?`<img src="${r}" alt="${c}" loading="lazy" decoding="async">`:""}<div>${c}<small>${cnt(c)} منتج<\/small><\/div><\/div>`}).join("")+'<\/div>';
+$("#grid").innerHTML=h}
+const CHUNK=48;let MORE={sections:[],si:0,ci:0,io:null};
+function appendChunk(){const g=$("#grid");const sent=$("#more");if(sent)sent.remove();let n=CHUNK;
+while(n>0&&MORE.si<MORE.sections.length){const s=MORE.sections[MORE.si];
+if(MORE.ci===0&&s.head)g.insertAdjacentHTML("beforeend",s.head);
+const take=Math.min(n,s.cards.length-MORE.ci);
+if(take>0){g.insertAdjacentHTML("beforeend",`<div class="pgrid">${s.cards.slice(MORE.ci,MORE.ci+take).join("")}<\/div>`);MORE.ci+=take;n-=take}
+if(MORE.ci>=s.cards.length){MORE.si++;MORE.ci=0}}
+if(MORE.si<MORE.sections.length){g.insertAdjacentHTML("beforeend",'<div id="more" style="height:60px"><\/div>');if(!MORE.io)MORE.io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))appendChunk()},{rootMargin:"800px"});MORE.io.observe($("#more"))}}
+function paint(sections,empty){if(!sections.length){$("#grid").innerHTML=empty;return}MORE.sections=sections;MORE.si=0;MORE.ci=0;$("#grid").innerHTML="";appendChunk()}
+function grid(){const q=Q();if(cat===""&&!q){renderHome();return}const pt2=$("#ptools");if(pt2)pt2.style.display="";const C0=cat||"الكل";const order=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];const inR=p=>{if(!prange)return true;const a=prange.split("-");const lo=+a[0]||0;const hi=a[1]?+a[1]:Infinity;const x=price(p);return x>=lo&&x<hi};const srt=a=>sortMode==="lo"?a.slice().sort((x,y)=>price(x)-price(y)):sortMode==="hi"?a.slice().sort((x,y)=>price(y)-price(x)):a;const pool=PV().filter(p=>match(p,q)&&inR(p));const empty=q?`<p class="empty">مفيش نتائج للبحث ده.<\/p>`:`<p class="empty">مفيش منتجات في القسم ده لسه، بنجهزه وبننزله قريب.<\/p>`;
+let sections=[];
+if(C0==="الكل"){
+if(sortMode!=="new"){sections=pool.length?[{head:"",cards:srt(pool).map(card)}]:[]}
+else{const cs=order.filter(c=>pool.some(p=>PC(p,c)));sections=cs.map(c=>({head:`<h3 class="csec" id="cat-${c}">${c}<\/h3>`,cards:srt(pool.filter(p=>PC(p,c))).map(card)}))}
+}else{
+const ce=IDX&&IDX.cats.find(x=>x.n===C0);const sorder=ce&&ce.subs?ce.subs.map(s=>s.n):[...new Set(pool.filter(p=>PC(p,C0)).map(p=>PSN(p,C0)))];
+const spool=pool.filter(p=>PC(p,C0)&&(sub==="الكل"||PS(p,C0,sub))&&(sub3==="الكل"||PK(p,C0,sub3)));
+if(sortMode!=="new"){sections=spool.length?[{head:"",cards:srt(spool).map(card)}]:[]}
+else if(sub!=="الكل"){
+if(sub3!=="الكل"){sections=spool.length?[{head:"",cards:srt(spool).map(card)}]:[]}
+else{const se=ce&&ce.subs&&ce.subs.find(x=>x.n===sub);
+if(se&&se.kids){const korder=se.kids.map(k=>k.n);const ks=korder.filter(k=>spool.some(p=>PK(p,C0,k)));const rest=spool.filter(p=>!korder.some(k=>PK(p,C0,k)));
+sections=ks.map(k=>({head:`<h3 class="csec">${k}<\/h3>`,cards:srt(spool.filter(p=>PK(p,C0,k))).map(card)}));if(rest.length)sections.push({head:"",cards:srt(rest).map(card)})}
+else{sections=[{head:`<h3 class="csec">${sub}<\/h3>`,cards:srt(spool.filter(p=>PSN(p,C0)===sub)).map(card)}]}}}
+else{const cs=sorder.filter(s=>spool.some(p=>PSN(p,C0)===s));sections=cs.map(s=>({head:`<h3 class="csec">${s}<\/h3>`,cards:srt(spool.filter(p=>PSN(p,C0)===s)).map(card)}))}}
+paint(sections,empty)}
+function card(p){return `<article class="pcard"><img src="${IM(p)}" alt="${p.name}" loading="lazy" decoding="async"><div class="pb"><h3>${p.name}<\/h3><div class="pr">${pHTML(p)}<\/div>${p.insp?`<span class="insp">معاينة عند الاستلام<\/span>`:""}${vars(p).length?`<button class="btn sm" data-id="${p.id}">اختار واطلب<\/button>`:`<button class="btn sm" disabled>نفذت الكمية<\/button>`}<\/div><\/article>`}
+function loadGal(p){const g=(p.gal||[]).filter(u=>u&&u!==IM(p));const t=document.getElementById("thumbs");if(!t||!g.length)return;const all=[IM(p)].concat(g);t.innerHTML=all.map((u,i)=>`<img src="${u}" data-i="${i}" alt="" class="${i?"":"on"}" loading="lazy" decoding="async">`).join("");t.onclick=e=>{const im=e.target.closest("img");if(!im)return;document.getElementById("mimg").src=all[+im.dataset.i];[...t.children].forEach(c=>c.classList.toggle("on",c===im))}}
+function openProduct(id){const p=P.find(x=>x.id===id);const names=p.optnames;
+$("#pm").innerHTML=`<div class="mbox"><button class="x" data-close>×<\/button><img id="mimg" src="${IM(p)}" alt="${p.name}"><div id="thumbs" class="thumbs"><\/div><h2>${p.name}<\/h2><div class="pr">${pHTML(p)}<\/div>${(window.DESC&&DESC[p.id])?`<div class="desc">${DESC[p.id].replace(/[<>&]/g,"")}<\/div>`:""}<div class="opts">${names.map((k,i)=>`<label>${k}<select data-i="${i}"><\/select><\/label>`).join("")}<label>الكمية<input id="qty" type="number" min="1" max="10" value="1"><\/label><\/div><div id="pmsg" class="err"><\/div><div class="pol" style="margin:10px 0">الدفع عند الاستلام · الشحن عن طريق موردينا المعتمدين خلال 2-5 أيام عمل حسب المحافظة · بعض المنتجات مستوردة · الاستبدال والاسترجاع للعيب أو الغلط حسب سياسة المورد<\/div><button class="btn" id="add">أضف للسلة<\/button><\/div>`;$("#pm").classList.add("open");loadGal(p);
+const sels=[...document.querySelectorAll("#pm select")];
+function fill(i){const prefix=sels.slice(0,i).map(s=>s.value);const vals=[...new Set(vars(p).filter(v=>prefix.every((x,j)=>v[0][j]===x)).map(v=>v[0][i]))];const cur=sels[i].value;sels[i].innerHTML=vals.map(x=>`<option value="${x}" ${x===cur?"selected":""}>${x==="default"?"عادي":x==="One size"?"مقاس واحد":x.replace(/^\./,"")}<\/option>`).join("");if(i+1<sels.length)fill(i+1);}
+sels.forEach((s,i)=>s.onchange=()=>{if(i+1<sels.length)fill(i+1)});fill(0);
+$("#add").onclick=()=>{const opts={};sels.forEach(s=>opts[names[+s.dataset.i]]=s.value);const vr=vars(p).find(v=>names.every((n,j)=>v[0][j]===opts[n]));const q=Math.max(1,Math.min(10,Math.floor(+$("#qty").value)||1));if(!vr){$("#pmsg").textContent="الاختيار ده مش متاح.";return}
+const inCart=cart.filter(c=>c.id===id&&names.every(n=>c.opts[n]===opts[n])).reduce((s,c)=>s+c.q,0);if(inCart+q>Math.min(10,vr[1])){$("#pmsg").textContent="الكمية المتاحة من الاختيار ده محدودة.";return}
+cart.push({id,opts,q});save();closeM();renderCart();$("#cart").classList.add("open");};}
+function closeM(){$("#pm").classList.remove("open")}
+const total=()=>cart.reduce((s,i)=>{const p=P.find(x=>x.id===i.id);return p?s+price(p)*i.q:s},0);
+function renderCart(){$("#cc").textContent=cart.reduce((s,i)=>s+i.q,0);
+$("#items").innerHTML=cart.length?cart.map((i,n)=>{const p=P.find(x=>x.id===i.id);if(!p)return "";return `<div class="ci"><img src="${IM(p)}" alt=""><div><b>${p.name}<\/b><small>${Object.entries(i.opts).map(([k,v])=>k+": "+(v==="default"?"عادي":v==="One size"?"مقاس واحد":String(v).replace(/^\./,""))).join(" · ")}<\/small><small>${i.q} × ${fmt(price(p))}<\/small><\/div><button class="x2" data-rm="${n}">حذف<\/button><\/div>`}).join(""):"<p class='empty'>السلة فاضية.<\/p>";
+$("#tot").textContent=fmt(total());$("#co").disabled=!cart.length;}
+function form(){const g=$("#gov");g.innerHTML="<option value=''>اختار المحافظة<\/option>"+Object.keys(AR).map(x=>`<option>${x}<\/option>`).join("");
+g.onchange=()=>{$("#area").innerHTML="<option value=''>اختار المنطقة<\/option>"+(AR[g.value]||[]).map(x=>`<option>${x}<\/option>`).join("")};g.onchange();}
+async function submit(e){e.preventDefault();const f=e.target;const phone=f.phone.value.replace(/\s/g,"");
+if(!/^01[0125][0-9]{8}$/.test(phone)){$("#msg").textContent="رقم الموبايل لازم يبقى 11 رقم ويبدأ بـ 01.";return}
+if(!cart.length||!f.gov.value||!f.area.value){$("#msg").textContent="اختار المحافظة والمنطقة.";return}
+await loadStock();for(const i of cart){const p=P.find(x=>x.id===i.id);const vr=vars(p).find(v=>p.optnames.every((n,j)=>v[0][j]===i.opts[n]));if(!vr||vr[1]<i.q){$("#msg").textContent="للأسف \""+p.name+"\" ("+Object.values(i.opts).map(v=>v==="default"?"عادي":v==="One size"?"مقاس واحد":v).join(" - ")+") مبقاش متاح بالكمية دي. شيله من السلة أو غيّر الاختيار.";return}}
+const base="E"+Date.now().toString(36).toUpperCase();const sup=i=>P.find(x=>x.id===i.id).supplier||"Angazny";const groups=[...new Set(cart.map(sup))];
+const orders=groups.map((g,k)=>{const its=cart.filter(i=>sup(i)===g);return{orderId:groups.length>1?base+"-"+(k+1):base,supplier:g,time:new Date().toISOString(),name:f.name.value.trim(),phone,governorate:f.gov.value,area:f.area.value,address:f.address.value.trim(),notes:f.notes.value.trim(),items:its.map(i=>{const p=P.find(x=>x.id===i.id);return{productId:p.sid||p.id,supplier:g,name:p.name,options:i.opts,qty:i.q,unitPrice:price(p),angaznyPrice:curBase(p)}}),total:its.reduce((t,i)=>t+price(P.find(p=>p.id===i.id))*i.q,0),payment:"الدفع عند الاستلام"}});const id=orders.map(o=>o.orderId).join(" + ");
+const btn=$("#send");btn.disabled=true;btn.textContent="جاري الإرسال...";
+try{if(!C.ORDERS_URL)throw new Error("no url");for(const order of orders){await fetch(C.ORDERS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)})}
+cart=[];save();renderCart();$("#checkout").classList.remove("open");$("#done").innerHTML=`<div class="mbox"><h2>تم استلام طلبك ✔<\/h2><p>رقم الطلب: <b>${id}<\/b><\/p><p>هنتواصل معاك على ${phone} لتأكيد الطلب، والدفع عند الاستلام. لو محتاج أي حاجة كلمنا على <a href="${C.MESSENGER}">ماسنجر<\/a>.<\/p><button class="btn" data-close>تمام<\/button><\/div>`;$("#done").classList.add("open");f.reset();
+}catch(err){$("#msg").innerHTML="مقدرناش نسجل الطلب دلوقتي. جرّب تاني أو كلمنا على <a href='"+C.MESSENGER+"'>ماسنجر<\/a>."}
+btn.disabled=false;btn.textContent="تأكيد الطلب";}
+
+function boot(){
+  const host=document.getElementById("cats");
+  if(host&&!document.getElementById("q")){
+    const qi=document.createElement("input");
+    qi.id="q";qi.type="search";qi.placeholder="دور على منتج بالاسم...";
+    qi.className="qbar";
+    let t=null;
+    qi.oninput=()=>{clearTimeout(t);t=setTimeout(()=>{if(qi.value.trim())loadAll();else{grid()}},200)};
+    host.parentNode.insertBefore(qi,host);
+  }
+  loadStock().then(ok=>{if(ok){cats();grid();renderCart()}});
+  (async()=>{
+    try{const r=await fetch("data/cats.json",{cache:"no-store"});IDX=await r.json()}catch(e){IDX=null}
+    const need=[...new Set(cart.map(i=>(IDX&&IDX.map&&IDX.map[i.id])||null).filter(Boolean))];
+    await Promise.all(need.map(loadCat));
+    renderCart();cats();grid();
+    if(!IDX)return;
+    await Promise.all([...new Set(Object.values(IDX.map||{}))].map(loadCat));cats();grid();
+    deep();
+  })();
+}
+document.addEventListener("click",e=>{const t=e.target;
+if(t.dataset&&t.dataset.home){cat="";sub="الكل";sub3="الكل";cats();grid();return}
+if(t.dataset&&t.dataset.l){sub3=t.dataset.l;cats();grid();return}
+if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll("#psort .chip").forEach(b=>b.classList.toggle("on",b.dataset.sort===sortMode));grid();return}
+if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
+if(t.dataset&&t.dataset.s){sub=t.dataset.s;sub3="الكل";cats();grid();return}
+if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.id==="docsbtn"){cat="ركن الدكاترة";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadCat(c.f).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadCat(c.f).then(()=>{cats();grid()})}}
+if(t.dataset.id)openProduct(t.dataset.id);
+if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
+if(t.dataset.rm){cart.splice(+t.dataset.rm,1);save();renderCart()}
+if(t.id==="cartbtn")$("#cart").classList.toggle("open");
+if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إجمالي الطلب: "+fmt(total())+" (الدفع عند الاستلام)";$("#checkout").classList.add("open")}});
+$("#orderform").addEventListener("submit",submit);
+form();boot();
+async function deep(){const m=location.hash.match(/^#p([A-Za-z]?\d+)$/);if(!m)return;const id=m[1];if(await ensure(id)){const q=P.find(x=>x.id===id||x.sid===id);if(q)openProduct(q.id)}}
+window.addEventListener("hashchange",deep);
+document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
+})();
+document.body.insertAdjacentHTML("beforeend",'<div id="lb"><b>×<\/b><img alt=""><\/div>');document.addEventListener("click",e=>{const lb=document.getElementById("lb");if(e.target.id==="mimg"){lb.querySelector("img").src=e.target.src;lb.classList.add("open");return}if(lb.classList.contains("open")){lb.classList.remove("open")}});
+</script></body></html>
