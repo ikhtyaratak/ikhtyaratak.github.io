@@ -217,10 +217,10 @@ async function loadStock(){try{const r=await fetch(C.STOCK_URL+"&_="+Date.now())
 let cart=[];try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
 const fmt=n=>n.toLocaleString("ar-EG")+" "+C.CURRENCY;
-let cat="";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
+let cat="";let grp="";let sub="الكل";let sub3="الكل";let sortMode="new";let prange="";
 const PV=()=>P.filter(p=>!LIVE||vars(p).length>0);
 let IDX=null; const LOADED=new Set(); let ALLLOADED=false;
-const DV="f1a2c390";
+const DV="t22a4f81";
 async function loadCat(f){if(!f||LOADED.has(f))return;LOADED.add(f);try{const r=await fetch("data/"+f+"?v="+DV,{cache:"force-cache"});const items=await r.json();items.forEach(p=>{if(p.desc){window.DESC[p.id]=p.desc}if(!P.some(x=>x.id===p.id))P.push(p)})}catch(e){LOADED.delete(f)}}
 function loadSection(c){const fs=(c.f?[c.f]:[]).concat(c.fs||[]);return Promise.all(fs.map(loadCat))}
 async function ensure(id){if(P.some(p=>p.id===id))return true;const f=IDX&&IDX.map&&IDX.map[id];if(!f)return false;await loadCat(f);cats();grid();return P.some(p=>p.id===id)}
@@ -235,10 +235,18 @@ const sc2=$("#subcats2");if(sc2){if(cat==="الكل"||cat===""||sub==="الكل"
 function renderHome(){const pt=$("#ptools");if(pt)pt.style.display="none";
 const cnt=c=>{if(IDX){const e=IDX.cats.find(x=>x.n===c);if(e&&e.c!=null)return e.c}return PV().filter(p=>liveStock(p)>0&&PC(p,c)).length};
 const rep=c=>{const e=IDX&&IDX.cats.find(x=>x.n===c);if(e&&e.img)return e.img;const p=PV().find(p=>PC(p,c)&&IM(p));return p?IM(p):""};
-const names=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];
 const virt=["رمضان","رأس السنة"];
+const tile=c=>{const r=rep(c);return `<a class="wtile" href="?c=${encodeURIComponent(c)}" data-c="${c}">${r?`<img src="${r}" alt="${c}" loading="lazy" decoding="async">`:""}<div>${c}<small>${cnt(c)} منتج<\/small><\/div><\/a>`};
+const grps=(IDX&&IDX.groups)||[];
 let h='';
-h+='<h3 class="wtitle">كل الأقسام<\/h3><div class="wtiles">'+names.filter(c=>!virt.includes(c)&&cnt(c)>0).map(c=>{const r=rep(c);return `<a class="wtile" href="?c=${encodeURIComponent(c)}" data-c="${c}">${r?`<img src="${r}" alt="${c}" loading="lazy" decoding="async">`:""}<div>${c}<small>${cnt(c)} منتج<\/small><\/div><\/a>`}).join("")+'<\/div>';
+if(!grp&&grps.length){
+h+='<h3 class="wtitle">كل الأقسام<\/h3><div class="wtiles">'+grps.map(g=>{const secs=(g.secs||[]).filter(c=>!virt.includes(c)&&cnt(c)>0);if(!secs.length)return "";const r=g.img||rep(secs[0]);const n=secs.reduce((s,c)=>s+cnt(c),0);return `<a class="wtile" href="?g=${encodeURIComponent(g.n)}" data-g="${g.n}">${r?`<img src="${r}" alt="${g.n}" loading="lazy" decoding="async">`:""}<div>${g.n}<small>${n} منتج<\/small><\/div><\/a>`}).join("")+'<\/div>';
+}else if(grp){
+const g0=grps.find(x=>x.n===grp);const names=g0?g0.secs:[];
+h+='<h3 class="wtitle"><a href="?" data-home="1" style="text-decoration:none">🏠<\/a> '+grp+'<\/h3><div class="wtiles">'+names.filter(c=>!virt.includes(c)&&cnt(c)>0).map(tile).join("")+'<\/div>';
+}else{
+const names=IDX?IDX.cats.map(c=>c.n):[...new Set(PV().map(p=>p.cat))];
+h+='<h3 class="wtitle">كل الأقسام<\/h3><div class="wtiles">'+names.filter(c=>!virt.includes(c)&&cnt(c)>0).map(tile).join("")+'<\/div>'}
 $("#grid").innerHTML=h}
 const CHUNK=48;let MORE={sections:[],si:0,ci:0,io:null};
 function appendChunk(){const g=$("#grid");const sent=$("#more");if(sent)sent.remove();let n=CHUNK;
@@ -318,11 +326,12 @@ function boot(){
     deep();
   })();
 }
-function setURL(){try{const u=new URL(location.href);if(cat===""){u.searchParams.delete("c")}else{u.searchParams.set("c",cat)}history.pushState({c:cat},"",u)}catch(e){}}
-window.addEventListener("popstate",()=>{const c=new URLSearchParams(location.search).get("c")||"";cat=c;sub="الكل";sub3="الكل";if(IDX){const ce=IDX.cats.find(x=>x.n===cat);if(ce)loadCat(ce.f).then(()=>{cats();grid()})}cats();grid()});
+function setURL(){try{const u=new URL(location.href);if(cat===""){u.searchParams.delete("c")}else{u.searchParams.set("c",cat)}if(grp===""){u.searchParams.delete("g")}else{u.searchParams.set("g",grp)}history.pushState({c:cat,g:grp},"",u)}catch(e){}}
+window.addEventListener("popstate",()=>{const c=new URLSearchParams(location.search).get("c")||"";cat=c;grp=new URLSearchParams(location.search).get("g")||"";sub="الكل";sub3="الكل";if(IDX){const ce=IDX.cats.find(x=>x.n===cat);if(ce)loadCat(ce.f).then(()=>{cats();grid()})}cats();grid()});
 document.addEventListener("click",e=>{let t=e.target;
-if(t&&t.closest){const g=t.closest("[data-home],[data-c],[data-s],[data-l],[data-sort],[data-pr],[data-id],[data-rm],#cartbtn,#themebtn,#docsbtn,[data-close]");if(g)t=g}
-if(t.dataset&&t.dataset.home){e.preventDefault();cat="";sub="الكل";sub3="الكل";setURL();cats();grid();return}
+if(t&&t.closest){const g=t.closest("[data-home],[data-g],[data-c],[data-s],[data-l],[data-sort],[data-pr],[data-id],[data-rm],#cartbtn,#themebtn,#docsbtn,[data-close]");if(g)t=g}
+if(t.dataset&&t.dataset.home){e.preventDefault();cat="";grp="";sub="الكل";sub3="الكل";setURL();cats();grid();return}
+if(t.dataset&&t.dataset.g){e.preventDefault();grp=t.dataset.g;cat="";sub="الكل";sub3="الكل";setURL();cats();grid();return}
 if(t.dataset&&t.dataset.l){sub3=t.dataset.l;cats();grid();return}
 if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll("#psort .chip").forEach(b=>b.classList.toggle("on",b.dataset.sort===sortMode));grid();return}
 if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
@@ -337,7 +346,7 @@ if(t.id==="cartbtn")$("#cart").classList.toggle("open");
 if(t.id==="co"){$("#cart").classList.remove("open");$("#sum").textContent="إجمالي الطلب: "+fmt(total())+" (الدفع عند الاستلام)";$("#checkout").classList.add("open")}});
 $("#orderform").addEventListener("submit",submit);
 form();boot();
-try{const c0=new URLSearchParams(location.search).get("c");if(c0)cat=c0}catch(e){}
+try{const c0=new URLSearchParams(location.search).get("c");if(c0)cat=c0;const g0=new URLSearchParams(location.search).get("g");if(g0)grp=g0}catch(e){}
 async function deep(){const m=location.hash.match(/^#p([A-Za-z]?\d+)$/);if(!m)return;const id=m[1];if(await ensure(id)){const q=P.find(x=>x.id===id||x.sid===id);if(q)openProduct(q.id)}}
 window.addEventListener("hashchange",deep);
 document.querySelectorAll("[data-fb]").forEach(a=>a.href=C.FB_PAGE);document.querySelectorAll("[data-ms]").forEach(a=>a.href=C.MESSENGER);
