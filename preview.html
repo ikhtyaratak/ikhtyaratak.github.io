@@ -161,7 +161,7 @@ body.light .banner:hover{box-shadow:0 18px 40px rgba(30,40,60,.25)}
 </div></section>
 <section id="docs"><div class="wrap"><div class="docsband">
 <div><span class="doctag">جديد</span><h2>ركن الدكاترة</h2>
-<p>سكرابات، بالطو، سماعات وأدوات، وكل اللي الطبيب وطالب الطب محتاجه في مكان واحد — دفع عند الاستلام والتوصيل لكل المحافظات.</p></div>
+<p>شباشب وكلوج طبي مريح لدوامات المستشفى الطويلة — دفع عند الاستلام والتوصيل لكل المحافظات.</p></div>
 <button class="btn" id="docsbtn">اتفرج على الركن</button>
 </div></div></section>
 <section id="products"><div class="wrap"><h2>المنتجات <span class="ptot" id="ptot"></span></h2><div class="chips" id="cats"></div><div class="chips subs" id="subcats"></div><div class="chips subs2" id="subcats2"></div><div class="ptools" id="ptools"><div class="chips subs" id="psort"><button class="chip sm on" data-sort="new">الأحدث</button><button class="chip sm" data-sort="lo">الأرخص الأول</button><button class="chip sm" data-sort="hi">الأغلى الأول</button></div><div class="chips subs" id="prange"><button class="chip sm on" data-pr="">كل الأسعار</button><button class="chip sm" data-pr="0-100">أقل من ١٠٠</button><button class="chip sm" data-pr="100-250">١٠٠ - ٢٥٠</button><button class="chip sm" data-pr="250-500">٢٥٠ - ٥٠٠</button><button class="chip sm" data-pr="500-1000">٥٠٠ - ١٠٠٠</button><button class="chip sm" data-pr="1000-">أكتر من ١٠٠٠</button></div></div><div id="grid"></div></div></section>
@@ -324,7 +324,7 @@ if(t.dataset&&t.dataset.sort){sortMode=t.dataset.sort;document.querySelectorAll(
 if(t.dataset&&t.dataset.pr!==undefined){prange=t.dataset.pr||"";document.querySelectorAll("#prange .chip").forEach(b=>b.classList.toggle("on",(b.dataset.pr||"")===prange));grid();return}
 if(t.dataset&&t.dataset.s){sub=t.dataset.s;sub3="الكل";cats();grid();return}
 if(t.dataset&&t.dataset.c&&t.closest&&t.closest("#catbar")){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
-if(t.id==="docsbtn"){cat="ركن الدكاترة";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
+if(t.id==="docsbtn"){cat="ركن الدكاترة (شباشب وكلوج طبي)";sub="الكل";sub3="الكل";cats();grid();if(IDX){const c=IDX.cats.find(x=>x.n===cat);if(c)loadSection(c).then(()=>{cats();grid()})}document.getElementById("products").scrollIntoView({behavior:"smooth"});return}
 if(t.dataset.c){cat=t.dataset.c;sub="الكل";sub3="الكل";setURL();cats();grid();if(cat==="الكل")loadAll();if(IDX){const c=IDX.cats.find(x=>x.n===t.dataset.c);if(c)loadSection(c).then(()=>{cats();grid()})}if(t.closest&&(t.closest(".wtile")||t.closest(".banner")))document.getElementById("products").scrollIntoView({behavior:"smooth"})}
 if(t.dataset.id)openProduct(t.dataset.id);
 if(t.hasAttribute&&t.hasAttribute("data-close")||t.classList.contains("modal"))document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
